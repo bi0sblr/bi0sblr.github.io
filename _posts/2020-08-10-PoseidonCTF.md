@@ -3,6 +3,7 @@ layout : post
 title: PoseidonCTF
 description: Rev writeups
 date: 2020-08-10
+image: /images/poseidon/logo.png
 categories:
    - z3
    - ctf

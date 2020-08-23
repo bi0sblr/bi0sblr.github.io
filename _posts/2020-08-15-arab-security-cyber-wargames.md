@@ -3,6 +3,7 @@ layout: post
 title: Arab Security Cyber Wargames
 date: 2020-08-15
 description : Crypto Writeups
+image: /images/ascwg/ascscoreboard.png
 tags: [crypto,ctf,rsa,des]
 author_staff_member: Siddartha Malladi
 ---

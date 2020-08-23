@@ -16,6 +16,8 @@
         <li><a href="{{ my_page.url | prepend: site.baseurl }}">{{ my_page.title }}</a></li>
         {% endif %}
       {% endfor %}
+      <li><a href="{{ site.baseurl }}/all_posts.html">Blog</a></li>
+      <li><a href="{{ site.baseurl }}/about.html">About us</a></li>
     </ul>
     <a href="#" class="close">Close</a>
   </div>
@@ -25,7 +27,7 @@
 <section id="banner">
   <div class="inner">
     <div class="logo"><span class="icon fa-diamond"></span></div>
-    <h2>{{ site.title }}</h2>
+    <a href="{{ site.url }}"><h2>{{ site.title }}</h2></a>
     <p>{{ site.description }}</p>
   </div>
 </section>

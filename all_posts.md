@@ -1,0 +1,4 @@
+---
+layout: allposts
+title: Blog
+---

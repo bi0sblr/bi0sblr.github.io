@@ -1,0 +1,28 @@
+---
+layout: default
+---
+
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<!-- Wrapper -->
+	<section id="wrapper">
+		<header>
+		<div class = "inner">
+				<h2>{{ page.title }}</h2>
+        </div>
+		</header>
+
+		<!-- Content -->
+
+					{{ content }}
+     <section id="5" class="style2 alt wrapper spotlight">
+			<div class="inner">
+        <a href="{{ my_page.url | prepend: site.baseurl }}" class="image"><img src="images/members/mentor.png" alt="" /></a>
+				<div class="content">
+					<h2 class="major">Vipin Pavithran</h2>
+					<p>Mentor, Founder</p>
+				</div>
+			</div>					
+      </section>
+      {% include spotlight.html %}
+	</section>
+</article>

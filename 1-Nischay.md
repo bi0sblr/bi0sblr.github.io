@@ -7,3 +7,7 @@ id: one
 tagline: Reversing | Currently losing my mind over the right bytes.
 category: blog
 ---
+
+So stuff that I type here is actually shown in the website? 
+
+Huh, who would've thought.

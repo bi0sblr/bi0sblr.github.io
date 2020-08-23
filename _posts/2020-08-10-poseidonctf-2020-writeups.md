@@ -3,6 +3,7 @@ layout: post
 title: PoseidonCTF 2020 writeups
 date: 2020-08-10
 subtitle : discrete log challenge
+image: /images/poseidon/logo.png
 categories:
    - crypto
    - ctf
