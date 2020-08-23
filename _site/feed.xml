@@ -1,0 +1,633 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>c0d3_h4cki05_</title>
+    <description>A CTF team from Amrita, Bengaluru
+</description>
+    <link>http://localhost:4000/teamweb/</link>
+    <atom:link href="http://localhost:4000/teamweb/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Sun, 23 Aug 2020 22:06:01 +0530</pubDate>
+    <lastBuildDate>Sun, 23 Aug 2020 22:06:01 +0530</lastBuildDate>
+    <generator>Jekyll v4.0.0</generator>
+    
+      <item>
+        <title>Arab Security Cyber Wargames</title>
+        <description>&lt;p&gt;&lt;img src=&quot;/images/ascwg/logo.png&quot; alt=&quot;logo&quot; /&gt;&lt;/p&gt;
+&lt;h1 id=&quot;introduction&quot;&gt;Introduction&lt;/h1&gt;
+
+&lt;p&gt;This CTF was the Qualifier to the finals, and rev was pretty easy. Anyways, for people that might not have understood how to solve certain challenges, this writeup is for them.&lt;/p&gt;
+
+&lt;h2 id=&quot;check&quot;&gt;Check&lt;/h2&gt;
+
+&lt;p&gt;TL;DR: Manipulate environment variables for fun and flags&lt;/p&gt;
+
+&lt;p&gt;I got this challenge while the main server was down, in the github. Let’s take a quick look in IDA.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/ascwg/rev/1.png&quot; alt=&quot;The important function&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;We can see that it uses &lt;code class=&quot;highlighter-rouge&quot;&gt;getenv&lt;/code&gt; to get the value of some environment variable, and then it XOR decodes the actual value that it needs to be. The XOR’ing happens in functions like this one.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/ascwg/rev/2.png&quot; alt=&quot;XOR'ing function&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;There was no actual need to find out what it’s XOR’ing with, because in the end, there’s a strcmp with the input value anyways, so this didn’t require a lot of thinking.
+By decoding the values in this way, we get the following values for the environment variables:&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;HOSTNAME=Machine&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;USER=reenigne&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Sure enough,&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/ascwg/rev/3.png&quot; alt=&quot;Result&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The flag is &lt;code class=&quot;highlighter-rouge&quot;&gt;ASCWG{3nv_v4r5_4r3_u53ful}&lt;/code&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;doom&quot;&gt;DOOM&lt;/h2&gt;
+
+&lt;p&gt;TL;DR: Crack an MD5 Hash.&lt;/p&gt;
+
+&lt;p&gt;Once you open the binary in IDA, you see the helpfully named functions, &lt;code class=&quot;highlighter-rouge&quot;&gt;main&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;getString&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;printFlag&lt;/code&gt;, and &lt;code class=&quot;highlighter-rouge&quot;&gt;verifyFlag&lt;/code&gt;. Getting to verifyFlag isn’t that hard, either. Just change &lt;code class=&quot;highlighter-rouge&quot;&gt;EIP&lt;/code&gt; at the right moment and you’re good to go!&lt;/p&gt;
+
+&lt;p&gt;The binary reads a file called string.txt, probably where we need to put the flag to check it.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/ascwg/rev/4.png&quot; alt=&quot;readString&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Here, we can see the binary taking the MD5 of something, probably our input.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/ascwg/rev/5.png&quot; alt=&quot;MD5&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;This is what it’s comparing it with:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/ascwg/rev/6.png&quot; alt=&quot;actual hash&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Now it’s just a matter of getting the hash and cracking it.&lt;/p&gt;
+
+&lt;p&gt;The hash is &lt;code class=&quot;highlighter-rouge&quot;&gt;B9448DD62F8F39451767741F799C8D8B&lt;/code&gt; and crackstation tells me that it’s an MD5 hash of &lt;code class=&quot;highlighter-rouge&quot;&gt;apocolypsedoomsday&lt;/code&gt;. Bingo!&lt;/p&gt;
+
+&lt;p&gt;Sure enough, the flag is &lt;code class=&quot;highlighter-rouge&quot;&gt;ASCWG{apocolypsedoomsday}&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/ascwg/rev/7.png&quot; alt=&quot;flag found&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;key&quot;&gt;Key&lt;/h2&gt;
+
+&lt;p&gt;This one was a rust challenge in Windows, and I suck at both. It was therefore kinda reassuring that me studying this stuff had an effect.&lt;/p&gt;
+
+&lt;p&gt;Since this is a rust chall, there’s a lot of stuff happening. The most important parts are often hidden somewhere deep in the code. I’m a noob and not competent at stuff like Lighthouse, and so I decided to not learn something in the middle of a CTF and go with my guts.&lt;/p&gt;
+
+&lt;p&gt;This binary seems to be asking for parameters from argv, and therefore, I put 16 bits of input.&lt;/p&gt;
+
+&lt;p&gt;Now, onto the interesting bit:&lt;/p&gt;
+
+&lt;p&gt;Somewhere deep in the function, we come across this bit of code:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/ascwg/rev/8.png&quot; alt=&quot;checker&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Now, to my non-rust-programmer head, this looked exactly like a checker in C:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;if(!cond1){
+    if(!cond2){
+        if(!cond3){
+            // fail
+        }   
+    }
+}
+else{
+   // goodboy
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Therefore, I decided to make sense of it and make a Z3py script to take care of the majority of finding out the values.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;from z3 import Int, Solver, solve, Xor, BitVec, And
+
+a = [BitVec('a%s' %i,16) for i in range(16)]
+s = Solver()
+
+s.add(a[0] == 2*a[7])
+s.add(a[1] == 48)
+s.add(a[2] == 52)
+s.add(a[3] == 50)
+s.add(a[9] == 38)
+s.add(a[4] == a[7] - 7)
+s.add(a[4] &amp;amp; 0xf4 == 36)
+s.add(0x5a ^ a[5] == 113)
+s.add(a[7] == 45)
+s.add(a[6] == (a[5] | 0x7e))
+s.add(a[8] == 66)
+s.add(a[10] == 83)
+s.add(a[11] == 92)
+s.add(a[12] + a[6] == 0x89) #-119?
+s.add(a[13] == (0x5a &amp;amp; 0x26 ^ 0x42))
+s.add(a[14] == 40)
+s.add(a[15] == 41)
+
+
+print(s.check())
+print(s.model())
+m = s.model()
+
+b= []
+for i in range(16):
+    b.append(chr(int(m[a[i]].as_string())))
+c = ''.join(b)
+print(c)
+for i in range(16):
+    print(i,b[i])
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now, if you run this script, you’ll find that a[6] and a[12] are left undefined. That’s because I couldn’t figure out a way to statically get those values, and had to get it using other ways, i.e., dynamic debugging.&lt;/p&gt;
+
+&lt;p&gt;Anyways, the key turns out to be &lt;code class=&quot;highlighter-rouge&quot;&gt;Z042&amp;amp;+~-B&amp;amp;S\/@()&lt;/code&gt; and the flag is &lt;code class=&quot;highlighter-rouge&quot;&gt;ASCWG{RustyRevEngineer}&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/ascwg/rev/9.png&quot; alt=&quot;done&quot; /&gt;&lt;/p&gt;
+</description>
+        <pubDate>Sat, 15 Aug 2020 00:00:00 +0530</pubDate>
+        <link>http://localhost:4000/teamweb/z3/ctf/rev/cracking/2020/08/15/ascwg.html</link>
+        <guid isPermaLink="true">http://localhost:4000/teamweb/z3/ctf/rev/cracking/2020/08/15/ascwg.html</guid>
+        
+        
+        <category>z3</category>
+        
+        <category>ctf</category>
+        
+        <category>rev</category>
+        
+        <category>cracking</category>
+        
+      </item>
+    
+      <item>
+        <title>Arab Security Cyber Wargames</title>
+        <description>&lt;p&gt;&lt;img src=&quot;/images/ascwg/ascscoreboard.png&quot; alt=&quot;scoreboard&quot; /&gt;
+First things first, Arab Security Cyber Wargames is a qualifiers CTF, Top 10 would be qualified for the finals at Egypt.
+We &lt;a href=&quot;https://ctftime.org/team/72702&quot;&gt;c0d3_h4cki05_&lt;/a&gt;(aka bi0s|Bangalore) finished 10th globally, hence we qualified for finals!
+Yay!&lt;/p&gt;
+
+&lt;p&gt;In this blog post I will be discussing 2 crypto challenges from Arab Security Wargames CTF Quals. As there are some intial glitches with the server, they shared the challenges &lt;a href=&quot;https://github.com/ascwg/Challenges&quot;&gt;repo&lt;/a&gt; in the discord server, so we were able to work on the challenges even though there were some glitches.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;S.No.&lt;/th&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;Challenge&lt;/th&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;Points&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;1&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;&lt;a href=&quot;https://github.com/ascwg/Challenges/tree/master/Crypto/Challenge%203&quot;&gt;Challenge 3&lt;/a&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;600&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;3&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;&lt;a href=&quot;https://github.com/ascwg/Challenges/tree/master/Crypto/Challenge%205&quot;&gt;Challenge 5&lt;/a&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;300&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h2 id=&quot;challenge-3&quot;&gt;Challenge 3&lt;/h2&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;a href=&quot;https://github.com/malladisiddu/Crypto-writeups/blob/master/ascwgctf/challenge3/output.txt&quot;&gt;output.txt&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Given &lt;code class=&quot;highlighter-rouge&quot;&gt;output.txt&lt;/code&gt; consists of Public Key (&lt;code class=&quot;highlighter-rouge&quot;&gt;n&lt;/code&gt; &amp;amp; &lt;code class=&quot;highlighter-rouge&quot;&gt;e&lt;/code&gt;) and ciphertext &lt;code class=&quot;highlighter-rouge&quot;&gt;c&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;n = 2318754427090927622417300593014303163027836982793164162950666250489681094136583599882469330682357229700000166714186122335692872792460409101465630110622887313064657894574037981904943176292533073634387002369380564791579428603519429963490374738649708747360755590037132507998435966068658633431918622092817702780128462915129741083129108481836485937804951555271147615962278158353917059561029043381242474374972583682945918237047674797098894662717409552897418650427548642489575961500481014997803061734956091625431696419759919121068387038071453059311371255995535187052409462363525765654622645413142987775053860188260137197659
+e = 65537
+c = 1852258477078452495280071169336816541669321769289372837198526954361460776833319048556839287633046754304414868057993901219892835088957705515939202089076460374548771033553266251154753679870528816210706553445963568771841753267644973871132621342897934474998162148362874305941012572949171990616677298854465965898581914403406403426504250013897086136105989549801404176555930509653029014518314103310549883855327513190607775750086851774949594618287441246861446444592130784569563671269161854267497652454746479173284327272563799067627736512266913669944284375302659511122504002144054772208775215907860036195680830269422876824977
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;I tried to factorize modulus &lt;code class=&quot;highlighter-rouge&quot;&gt;n&lt;/code&gt; using &lt;a href=&quot;http://factordb.com/&quot;&gt;factordb&lt;/a&gt; which didn’t help me, so I tried to find the &lt;a href=&quot;https://en.wikipedia.org/wiki/Fermat%27s_factorization_method&quot;&gt;fermat factors&lt;/a&gt;, if you don’t know the algo then no worry here is a simple function for Fermat factorization.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;fermat_factor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;assert&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;gmpy2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;isqrt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;b2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;gmpy2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;square&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;while&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;not&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;gmpy2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;is_square&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;b2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;gmpy2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;square&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;gmpy2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;isqrt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;gmpy2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;isqrt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;yes, I found &lt;code class=&quot;highlighter-rouge&quot;&gt;p&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;q&lt;/code&gt; using Fermat Factoriation,&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;p = 48153446679245376966822046985112099446617981034794594214042780096131516418638366375608599332095159143650219571976756039936351280836582867794175112625879990923510369077946617421338536566796348803001717218384229667003185508514134592197193786758239794011461538791978511429725895132475565257089664121103110770817                                                   
+q = 48153446679245376966822046985112099446617981034794594214042780096131516418638366375608599332095159143650219571976756039936351280836582867794175112625874897500464997377986242441540940715154519674822662819026591330454041967249535003603147605312684911517825154805431323771837685531683672611660925609168788996827
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Wait, challenge is not over yet. I tried decrypt the given ciphertext using these primes but couldn’t retrieve the plaintext. then I checked whether &lt;code class=&quot;highlighter-rouge&quot;&gt;p&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;q&lt;/code&gt; are primes or not, as we totient function should be calculated only by primes.
+&lt;img src=&quot;/images/ascwg/crypto/acscrypto3.png&quot; alt=&quot;partofchallenge&quot; /&gt;&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;In [11]: isPrime(p)
+Out[11]: 0
+
+In [12]: isPrime(q)
+Out[12]: 0
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;As the result shown above they aren’t primes. So I further factorized &lt;code class=&quot;highlighter-rouge&quot;&gt;p&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;q&lt;/code&gt; which got reduced to &lt;code class=&quot;highlighter-rouge&quot;&gt;p1&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;p2&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;q1&lt;/code&gt;, &amp;amp; &lt;code class=&quot;highlighter-rouge&quot;&gt;q2&lt;/code&gt;.&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;p1 = 6939268454184877330211144138413966814481101061382015473621711919814088916348213343387168181954880781520959109737312885406280110070698427014630125251118873
+p2 = 6939268454184877330211144138413966814481101061382015473621711919814088916348213343387168181954880781520959109737312885406280110070698427014630125251119529
+q1 = 6939268454184877330211144138413966814481101061382015473621711919814088916348213343387168181954880781520959109737312885406280110070698427014630125251118111
+q2 = 6939268454184877330211144138413966814481101061382015473621711919814088916348213343387168181954880781520959109737312885406280110070698427014630125251119557
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;so now the Euler totient function is&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;phi = (p1-1)*(p2-1)*(q1-1)*(q2-1)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Combining everything what I’ve discussed above we get entire exploit script,&lt;/p&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;Crypto.Util.number&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;gmpy2&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;fermat_factors&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;assert&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;gmpy2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;isqrt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;b2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;gmpy2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;square&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;while&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;not&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;gmpy2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;is_square&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;b2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;gmpy2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;square&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;gmpy2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;isqrt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;gmpy2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;isqrt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2318754427090927622417300593014303163027836982793164162950666250489681094136583599882469330682357229700000166714186122335692872792460409101465630110622887313064657894574037981904943176292533073634387002369380564791579428603519429963490374738649708747360755590037132507998435966068658633431918622092817702780128462915129741083129108481836485937804951555271147615962278158353917059561029043381242474374972583682945918237047674797098894662717409552897418650427548642489575961500481014997803061734956091625431696419759919121068387038071453059311371255995535187052409462363525765654622645413142987775053860188260137197659&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;e&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;65537&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1852258477078452495280071169336816541669321769289372837198526954361460776833319048556839287633046754304414868057993901219892835088957705515939202089076460374548771033553266251154753679870528816210706553445963568771841753267644973871132621342897934474998162148362874305941012572949171990616677298854465965898581914403406403426504250013897086136105989549801404176555930509653029014518314103310549883855327513190607775750086851774949594618287441246861446444592130784569563671269161854267497652454746479173284327272563799067627736512266913669944284375302659511122504002144054772208775215907860036195680830269422876824977&lt;/span&gt;
+
+
+&lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;q&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fermat_factors&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;p1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fermat_factors&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;q1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;q2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fermat_factors&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;phi&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;p1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;p2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;q1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;q2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;inverse&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;phi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;flag&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;long_to_bytes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;pow&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;flag&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Flag: &lt;code class=&quot;highlighter-rouge&quot;&gt;ASCWG{you_need_fermat_factorization_to_solve_RSA_Small_diffrince_Prime_Attack_12312}&lt;/code&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;challenge5&quot;&gt;Challenge5&lt;/h2&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;a href=&quot;https://github.com/malladisiddu/Crypto-writeups/blob/master/ascwgctf/challenge5/challenge.py&quot;&gt;challenge.py&lt;/a&gt; &lt;a href=&quot;https://github.com/malladisiddu/Crypto-writeups/blob/master/ascwgctf/challenge5/output.txt&quot;&gt;output.txt&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;This challenge was pretty easy, I didn’t took much time to solve this chalenge as I was aware of this attack before. Given &lt;code class=&quot;highlighter-rouge&quot;&gt;challenge.py&lt;/code&gt; is the encrypiton file and &lt;code class=&quot;highlighter-rouge&quot;&gt;output.txt&lt;/code&gt; is the ciphertext,&lt;/p&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;Crypto.Cipher&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;DES&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;base64&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;FLAG&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;flag&lt;/span&gt;
+
+
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;pad&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plaintext&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;while&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plaintext&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;plaintext&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;*&quot;&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;plaintext&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;enc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plaintext&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;cipher&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;DES&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;new&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;DES&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;MODE_ECB&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;base64&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b64encode&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cipher&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;encrypt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plaintext&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+
+
+&lt;span class=&quot;n&quot;&gt;key&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;##############&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;decode&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;hex&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;plaintext&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pad&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;flag&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;enc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plaintext&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;kIi6qSDhcSVErHbkpy/M1hRHfDpr8TiaGbAIrKUXooxSXwNnaeJgTQ==
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;When we look in to the &lt;code class=&quot;highlighter-rouge&quot;&gt;challenge.py&lt;/code&gt; it consists of two functions &lt;code class=&quot;highlighter-rouge&quot;&gt;pad&lt;/code&gt; for padding the flag and &lt;code class=&quot;highlighter-rouge&quot;&gt;enc&lt;/code&gt; for encrypting in &lt;code class=&quot;highlighter-rouge&quot;&gt;DES&lt;/code&gt; and that to in &lt;code class=&quot;highlighter-rouge&quot;&gt;ECB&lt;/code&gt; mode.&lt;/p&gt;
+
+&lt;h3 id=&quot;the-vulnerability&quot;&gt;The Vulnerability&lt;/h3&gt;
+&lt;p&gt;Here the vulnerability is the key. DES has specifically 4 weak keys. You can refer about weak keys &lt;a href=&quot;https://en.wikipedia.org/wiki/Weak_key&quot;&gt;here&lt;/a&gt;. So I applied DES weak key attack. And the weak keys are&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;0x0000000000000000
+0xFFFFFFFFFFFFFFFF
+0xE1E1E1E1F0F0F0F0
+0x1E1E1E1E0F0F0F0F
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;As I don’t know the key with which they encrypted, I just bruteforced among the 4 possible keys and got the flag.
+Here is my entire exploit,&lt;/p&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;Crypto.Cipher&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;DES&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;base64&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;binascii&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;cipher&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;base64&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b64decode&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;kIi6qSDhcSVErHbkpy/M1hRHfDpr8TiaGbAIrKUXooxSXwNnaeJgTQ==&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;
+Check out the weak keys of DES. There are 4 possible weak keys
+0x0000000000000000
+0xFFFFFFFFFFFFFFFF
+0xE1E1E1E1F0F0F0F0
+0x1E1E1E1E0F0F0F0F
+&quot;&quot;&quot;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;key&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;binascii&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;unhexlify&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;0000000000000000&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;des&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;DES&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;new&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DES&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;MODE_ECB&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;pt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;des&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;decrypt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cipher&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;key&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;binascii&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;unhexlify&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;FFFFFFFFFFFFFFFF&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;des&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;DES&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;new&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DES&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;MODE_ECB&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;pt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;des&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;decrypt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cipher&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;key&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;binascii&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;unhexlify&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;E1E1E1E1F0F0F0F0&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;des&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;DES&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;new&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DES&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;MODE_ECB&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;pt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;des&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;decrypt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cipher&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;key&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;binascii&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;unhexlify&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;1E1E1E1E0F0F0F0F&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;des&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;DES&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;new&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DES&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;MODE_ECB&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;pt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;des&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;decrypt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cipher&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Flag: &lt;code class=&quot;highlighter-rouge&quot;&gt;ASCWG{Welcome_to_des_weak_key_attack}&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;You can find both the exploit scripts in my &lt;a href=&quot;https://github.com/malladisiddu/Crypto-writeups/tree/master/ascwgctf&quot;&gt;github repo&lt;/a&gt;.
+Please post your comments in the comment section or you can ping me via twitter &lt;a href=&quot;https://twitter.com/st0ic3r&quot;&gt;@st0ci3r&lt;/a&gt; for any queries, suggestions and feedback.&lt;/p&gt;
+</description>
+        <pubDate>Sat, 15 Aug 2020 00:00:00 +0530</pubDate>
+        <link>http://localhost:4000/teamweb/2020/08/15/arab-security-cyber-wargames.html</link>
+        <guid isPermaLink="true">http://localhost:4000/teamweb/2020/08/15/arab-security-cyber-wargames.html</guid>
+        
+        <category>crypto</category>
+        
+        <category>ctf</category>
+        
+        <category>rsa</category>
+        
+        <category>des</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>PoseidonCTF 2020 writeups</title>
+        <description>&lt;p&gt;&lt;img src=&quot;/images/poseidon/logo.png&quot; alt=&quot;logo&quot; /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;challenge-discrete-log&quot;&gt;Challenge: discrete log&lt;/h2&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;I heard some cryptosystem uses discrete logarithm. &lt;br /&gt;
+    It is hard problem, isn’t it? &lt;br /&gt;
+    I encrypted the flag with 4095bit modulus… &lt;br /&gt;
+    Author : kiona&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://github.com/malladisiddu/Crypto-writeups/blob/master/PoseidonCTF/discrete%20log/output.txt&quot;&gt;output.txt&lt;/a&gt; &lt;a href=&quot;https://github.com/malladisiddu/Crypto-writeups/blob/master/PoseidonCTF/discrete%20log/problem.py&quot;&gt;problem.py&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Given generator, modulus and ciphertext&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;g = 172749132303451034825184289722866887646478207718904031630914096520683022158034517117605936723970812800902379716660696042889559048647206589145869496198395421965440272135852383965230458163451729744948637995163776071512309614027603968693250321092562108610034043037860044795655266224453184735452048413623769098671844195106558284409006269382544367448145088128499405797694142037310933061698125568790497068516077791616445318819525778890129259953967830407023305805724947609041398183006524760589480514375528363943261764527906775893795625189651746165941438248136930298545695110631212696683271254403308539994170329875688236599305478130030194371971383054083049610267982461416568688720562725217837462387935392946474596966349477680685726377666929540130924122398746591270899232208239961618302848348129375606841006687727574503519146164506867574157671109933022528435615415554171024171300585408907077259610240139419075684581512703943171162496513070572546968852202777002845137863414028314025114932581655385254082418111977242759980115915504202336380850329162861826132885827910210346708045087589916666711356848614195462267049823085141386868421005551877773672329046391854000523197388175515628464457551891476514779819019668102328395639607489673081022505099
+n = 204964538005458094391574690738766104196067587947267165575341074475716043971842449550067337731195102944823593489101699510575531541895593939634478254160200896755891641047742120885540191258962212405226135805491196590351987106011483652123110409148411537235255207358696047015199616340882291357173918540392964501976492251077110794432722042202109934588262870543755493029748475008610896164870659893013085704495216717998116109896882952474884270785733861739050889113464275228554841649603978281963688294995328883256317404081735364738985601286409677647577052211093127231530844271726386293348738817021732679704754961436390654856963930636538653822714234978179695778198536592408645222590877027896792957778186555118729335564281356291031440583078132397563914801937048297147819254611598144027963328749607393168101280779708669908245620694587176737529113823312930871616550632035759346759393976128246210013752530912953330415598837661326422094379798718827988692760848583517436061574821754507293943235476923624688378441177770313101393581916112910947153305055575974237171438666919114843946573283829704010962833299593770650238349021406868347635157566404829030358844616367849771415905381318344903398551946493709551783771889575282972265629264217620138873678733
+enc = 58749077215207190492371298843854826665007067693641554277597021927783439106518176607848876784025881251057880587477892585242567469682290542409002363284991521084199535617805983767364935247518813883871587009725229910084882524866335007624383374126379502610933045897762967063766174922757656816300993939273687091280630401460905159739072179134897626330594985795970230333335492872721173603390854317323095769925904629970032658376378937924244589208035572848434030889091930182042226202356340798415809817722086119981262671540923062830870681500341640178082497128371291359953884993700348396920219975667972939044100089402796215197615549948516999318565775626034391795498234335228509335613253342179818268681240653806015040771731154600343889814141382273506238199460016081871283682838719833841393528105371834961952754168257271394981634141286257602629174903644009990944563870674888760807045240859970974837258567236802649772719645362361127488126570702845624169598462415354350277654287009645871674305081755840523910495569765451437265785385267255452210836618705384598344351666486694835670072372776263570462639412759703397195350879217144135006968472391258993407007505079063659488976186871280542665310586453539153772026697145449262179967269376262891840972187
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Also they gave the encryption function, &lt;code class=&quot;highlighter-rouge&quot;&gt;encrypt&lt;/code&gt; function looks like a DLP&lt;/p&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;encrypt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pubkey&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;msg&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pubkey&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;msgint&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bytes_to_long&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;msg&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;encint&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;pow&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;msgint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;encint&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;but the &lt;code class=&quot;highlighter-rouge&quot;&gt;keygen&lt;/code&gt; function made me to think&lt;/p&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;keygen&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;getPrime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1024&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;q&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;**&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;256&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;while&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;not&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;isPrime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)):&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;q&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;**&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;q&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;while&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;getRandomRange&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;pow&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;**&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;break&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;After a lot of googling I came to know that this is &lt;strong&gt;Okamoto-Uchiyama Cryptosystem&lt;/strong&gt;.
+Encryption and Decryption of this cryptosystem is
+&lt;img src=&quot;/images/poseidon/crypto/okamoto-cryptosystem.png&quot; alt=&quot;okamoto-cryptosystem&quot; /&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+&lt;h2 id=&quot;the-vulnerability&quot;&gt;The Vulnerability&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;Given &lt;code class=&quot;highlighter-rouge&quot;&gt;modulus(n)&lt;/code&gt; is factorizable
+I just used &lt;code class=&quot;highlighter-rouge&quot;&gt;factorint&lt;/code&gt; function from &lt;code class=&quot;highlighter-rouge&quot;&gt;sympy&lt;/code&gt; module to factorize &lt;code class=&quot;highlighter-rouge&quot;&gt;n&lt;/code&gt;
+&lt;img src=&quot;/images/poseidon/crypto/Nfactors.png&quot; alt=&quot;Nfactors&quot; /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;found &lt;code class=&quot;highlighter-rouge&quot;&gt;p&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;q&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;p = 119651922772470381538865905053880240648981610788158704687128059461662288085281852229102200555108770317758154242404640572330743835298457861729905310772997229435609782100922883676187295581012547043047440427111941567355233755127540922309999250508616729587128520903493409357118622862418582616182347566040409411199
+q = 14316582623149216275107736834733631963084207821436746289501498129530929625521490902864194713174501986932485113452517074017970673917631950366223575922988112330159225019538408970690585920890359634920580740147682705722228172472753088442523496334194454100216062475928574494498461028671300195357832818313464997449224252250371444494034870771502023373906812804159280130560764590554712397821927029154370470286256319839500521932294332044793429751975782128661939509416939951784853574757157319178829932860446931760541284010213101009421074205053284557804760664567589983709792028490535528417695748683896268760352087789362996257933
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;and then it is just the implementaion of the Okamoto-Uchiyama decryption function&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;L&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;//&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;
+ 
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;inverse&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Here is my entire exploit,&lt;/p&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;Crypto.Util.number&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;
+ 
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;L&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;//&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;
+ 
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;inverse&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+ 
+&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;58749077215207190492371298843854826665007067693641554277597021927783439106518176607848876784025881251057880587477892585242567469682290542409002363284991521084199535617805983767364935247518813883871587009725229910084882524866335007624383374126379502610933045897762967063766174922757656816300993939273687091280630401460905159739072179134897626330594985795970230333335492872721173603390854317323095769925904629970032658376378937924244589208035572848434030889091930182042226202356340798415809817722086119981262671540923062830870681500341640178082497128371291359953884993700348396920219975667972939044100089402796215197615549948516999318565775626034391795498234335228509335613253342179818268681240653806015040771731154600343889814141382273506238199460016081871283682838719833841393528105371834961952754168257271394981634141286257602629174903644009990944563870674888760807045240859970974837258567236802649772719645362361127488126570702845624169598462415354350277654287009645871674305081755840523910495569765451437265785385267255452210836618705384598344351666486694835670072372776263570462639412759703397195350879217144135006968472391258993407007505079063659488976186871280542665310586453539153772026697145449262179967269376262891840972187&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;h&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;192159296555627848138161414610654352733622245828513614322558905012466816654671972346097031349358247386944424511091960135752048099269046885847641446796741613064870966394096441981877237249574049165705367669167590253669921614109896281214885058820658568816500100732681453444211847674759535008378374194993480547115821823335912615050292051256279172523837607469551836256962239888184563456599538614372245459275406829924636980200891002347949094452338295057936566802092897987034436798432255668134027785450435019827028246194944275199769383463418480308364744322755424547117446235150277184138127498378264607769444968098425004126534119633031782416338154206700571418961129558294523843396301309255007288131883140330133903142845213481400374474735503009522483093310190196533677052463898663664335601466576736766660069653426577599703983465231424213328004576799542685640229970843791383652407916322015680525012551700803266007630695432556193833095738633105291346190869220704720694903194134841015855846831167967421505059755562552192829873204697156419144842126864221399403808755229408562864151563522531949899106533620150563956994515272797108554534792421110378348245132961702004979121873575596258771082192565891916462803744544917961364375730965315938457364679&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;204964538005458094391574690738766104196067587947267165575341074475716043971842449550067337731195102944823593489101699510575531541895593939634478254160200896755891641047742120885540191258962212405226135805491196590351987106011483652123110409148411537235255207358696047015199616340882291357173918540392964501976492251077110794432722042202109934588262870543755493029748475008610896164870659893013085704495216717998116109896882952474884270785733861739050889113464275228554841649603978281963688294995328883256317404081735364738985601286409677647577052211093127231530844271726386293348738817021732679704754961436390654856963930636538653822714234978179695778198536592408645222590877027896792957778186555118729335564281356291031440583078132397563914801937048297147819254611598144027963328749607393168101280779708669908245620694587176737529113823312930871616550632035759346759393976128246210013752530912953330415598837661326422094379798718827988692760848583517436061574821754507293943235476923624688378441177770313101393581916112910947153305055575974237171438666919114843946573283829704010962833299593770650238349021406868347635157566404829030358844616367849771415905381318344903398551946493709551783771889575282972265629264217620138873678733&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;g&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;172749132303451034825184289722866887646478207718904031630914096520683022158034517117605936723970812800902379716660696042889559048647206589145869496198395421965440272135852383965230458163451729744948637995163776071512309614027603968693250321092562108610034043037860044795655266224453184735452048413623769098671844195106558284409006269382544367448145088128499405797694142037310933061698125568790497068516077791616445318819525778890129259953967830407023305805724947609041398183006524760589480514375528363943261764527906775893795625189651746165941438248136930298545695110631212696683271254403308539994170329875688236599305478130030194371971383054083049610267982461416568688720562725217837462387935392946474596966349477680685726377666929540130924122398746591270899232208239961618302848348129375606841006687727574503519146164506867574157671109933022528435615415554171024171300585408907077259610240139419075684581512703943171162496513070572546968852202777002845137863414028314025114932581655385254082418111977242759980115915504202336380850329162861826132885827910210346708045087589916666711356848614195462267049823085141386868421005551877773672329046391854000523197388175515628464457551891476514779819019668102328395639607489673081022505099&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;p&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;119651922772470381538865905053880240648981610788158704687128059461662288085281852229102200555108770317758154242404640572330743835298457861729905310772997229435609782100922883676187295581012547043047440427111941567355233755127540922309999250508616729587128520903493409357118622862418582616182347566040409411199&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;cp&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;pow&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;**&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;gp&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;pow&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;**&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+ 
+&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;L&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;L&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;gp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;long_to_bytes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;Flag&lt;/strong&gt;: &lt;code class=&quot;highlighter-rouge&quot;&gt;Poseidon{l064r17hm_fr0m_7h3_cycl1c_6r0up}&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Please post your comments in the comment section or you can ping me via twitter &lt;a href=&quot;https://twitter.com/st0ic3r&quot;&gt;@st0ci3r&lt;/a&gt; for any queries, suggestions and feedback.&lt;/p&gt;
+
+&lt;hr /&gt;
+&lt;h2 id=&quot;reference&quot;&gt;Reference&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Okamoto%E2%80%93Uchiyama_cryptosystem&quot;&gt;Okamoto-Uchiyama Cryptosystem&lt;/a&gt;&lt;/p&gt;
+
+</description>
+        <pubDate>Mon, 10 Aug 2020 00:00:00 +0530</pubDate>
+        <link>http://localhost:4000/teamweb/crypto/ctf/okamoto/2020/08/10/poseidonctf-2020-writeups.html</link>
+        <guid isPermaLink="true">http://localhost:4000/teamweb/crypto/ctf/okamoto/2020/08/10/poseidonctf-2020-writeups.html</guid>
+        
+        
+        <category>crypto</category>
+        
+        <category>ctf</category>
+        
+        <category>okamoto</category>
+        
+      </item>
+    
+      <item>
+        <title>PoseidonCTF</title>
+        <description>&lt;p&gt;&lt;img src=&quot;/images/poseidon/logo.png&quot; alt=&quot;logo&quot; /&gt;&lt;/p&gt;
+&lt;h1 id=&quot;intro&quot;&gt;Intro&lt;/h1&gt;
+
+&lt;p&gt;Well, I screwed up. I was only able to solve only one rev chall, their warmup. I guess it’s normal for a n00b like me, though.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-large-cherries&quot;&gt;The Large Cherries&lt;/h2&gt;
+
+&lt;p&gt;We’re given a file called Lao-Tzu.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/poseidon/rev/1.png&quot; alt=&quot;ptrace reeee&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;There’s a ptrace at the very top, so if you bypass it, you will see that:&lt;/p&gt;
+
+&lt;p&gt;It asks for two kinds of inputs, and for the first time, it asks for 9 characters and 10 characters the second time.&lt;/p&gt;
+
+&lt;p&gt;The first input is sent to this function, called &lt;code class=&quot;highlighter-rouge&quot;&gt;magic_word&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/poseidon/rev/2.png&quot; alt=&quot;magick&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The function essentially makes sure that certain conditions are met for input[0] to input[7], even though the input asks for 9 characters. This is our key to solving this chall.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;from z3 import Solver, Xor, BitVec
+
+a = [BitVec('a%s' % i,64 ) for i in range(9)]
+
+s = Solver()
+s.add(a[3] + a[0] == 0xab)
+s.add(a[3] == 0x37)
+s.add(a[2] ^ a[1] == 0x5d)
+s.add(a[4] - a[2] == 5)
+s.add(a[6] + a[4] == 0xa2)
+s.add(a[5] == a[6])
+s.add(a[6] == 0x30)
+s.add(a[7] == 0x7a)
+s.check()
+m = s.model()
+print(s.model())
+b= []
+for i in range(8):
+    b.append(chr(int(m[a[i]].as_string())))
+c = ''.join(b)
+print(c)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Now, this piece of code gives out &lt;code class=&quot;highlighter-rouge&quot;&gt;t0m7r00z&lt;/code&gt;, which is only 8 characters. This will be important later.&lt;/p&gt;
+
+&lt;p&gt;The second piece of input is a 10 character input, that checks if all of the characters add up to &lt;code class=&quot;highlighter-rouge&quot;&gt;0x294&lt;/code&gt;, i.e. &lt;code class=&quot;highlighter-rouge&quot;&gt;660&lt;/code&gt;. That happens to be the sum of digital sum of &lt;code class=&quot;highlighter-rouge&quot;&gt;t0m7r00z&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Therefore, we need to add something extra to the mix. This character can be quite literally anything, and I just typed &lt;code class=&quot;highlighter-rouge&quot;&gt;t0m7r00za&lt;/code&gt; as both inputs.&lt;/p&gt;
+
+&lt;p&gt;Flag: &lt;code class=&quot;highlighter-rouge&quot;&gt;Poseidon{Its_L3_t3Mp5_DeS_C3r1s35}&lt;/code&gt;&lt;/p&gt;
+
+</description>
+        <pubDate>Mon, 10 Aug 2020 00:00:00 +0530</pubDate>
+        <link>http://localhost:4000/teamweb/z3/ctf/rev/2020/08/10/PoseidonCTF.html</link>
+        <guid isPermaLink="true">http://localhost:4000/teamweb/z3/ctf/rev/2020/08/10/PoseidonCTF.html</guid>
+        
+        
+        <category>z3</category>
+        
+        <category>ctf</category>
+        
+        <category>rev</category>
+        
+      </item>
+    
+      <item>
+        <title>INCTFi 2020 Writeup</title>
+        <description>&lt;h2 id=&quot;challenge--buggy&quot;&gt;Challenge : Buggy&lt;/h2&gt;
+
+&lt;h3 id=&quot;writeup&quot;&gt;Writeup:&lt;/h3&gt;
+
+&lt;p&gt;The challenge is about bypassing 403 error along with file upload vulneribility and LFI.&lt;br /&gt;
+When we entered the website there’s a login form and a link to register.
+After clicking on register we see a &lt;code class=&quot;highlighter-rouge&quot;&gt;403 Forbidden&lt;/code&gt; error.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/inctfi-2020/403.jpg&quot; alt=&quot;error&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Looking at this, thought we can bypass it which is smuggling the request to get registered. After some googling i found a way to bypass it &lt;code class=&quot;highlighter-rouge&quot;&gt;/./register.php?username=ph03n1x&amp;amp;password=ph03n1x&lt;/code&gt;&lt;br /&gt;
+Intercepting the request with burp and forwarding it, our registration is successful.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/inctfi-2020/Request.jpg&quot; alt=&quot;burp&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Logging in, we find a file uploader which accepts any file extension. Uploading the file, it removes the uploaded file extension and convert the file name to a hash.
+I thought of getting a PHP Shell and uploaded a php file.&lt;br /&gt;
+After uploading the php, there’s an option to &lt;code class=&quot;highlighter-rouge&quot;&gt;include&lt;/code&gt; the file. We get a page with following details&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;The file has been uploaded to: /var/www/uploads/df0f1a1ac715de9266c8d8391769156a&lt;/p&gt;
+
+  &lt;p&gt;To include the file, use ?include=&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Here we get &lt;code class=&quot;highlighter-rouge&quot;&gt;LFI&lt;/code&gt; at &lt;code class=&quot;highlighter-rouge&quot;&gt;/../../../var/www/uploads/df0f1a1ac715de9266c8d8391769156a&lt;/code&gt;
+This &lt;code class=&quot;highlighter-rouge&quot;&gt;include&lt;/code&gt; option allows only the content of &lt;code class=&quot;highlighter-rouge&quot;&gt;http (or) https&lt;/code&gt;.&lt;br /&gt;
+The final payload for LFI will be &lt;code class=&quot;highlighter-rouge&quot;&gt;/index.php?include=http:/../../../var/www/uploads/df0f1a1ac715de9266c8d8391769156a&lt;/code&gt;&lt;br /&gt;
+After getting the shell, &lt;code class=&quot;highlighter-rouge&quot;&gt;cat&lt;/code&gt; the files in directory.&lt;br /&gt;
+The flag is in &lt;code class=&quot;highlighter-rouge&quot;&gt;config.php&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;Flag: &lt;code class=&quot;highlighter-rouge&quot;&gt;inctf{REQU357_5MUGG71NG_4ND_1NCLUD3_F0R_TH3_W1N}&lt;/code&gt;&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+</description>
+        <pubDate>Mon, 03 Aug 2020 18:54:49 +0530</pubDate>
+        <link>http://localhost:4000/teamweb/blog/2020/08/03/buggy.html</link>
+        <guid isPermaLink="true">http://localhost:4000/teamweb/blog/2020/08/03/buggy.html</guid>
+        
+        <category>file upload</category>
+        
+        <category>lfi</category>
+        
+        
+        <category>blog</category>
+        
+      </item>
+    
+      <item>
+        <title>InCTF 2020 writeups</title>
+        <description>&lt;h2 id=&quot;challenge-polyrsa&quot;&gt;Challenge: PolyRSA&lt;/h2&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Description
+ All the warmup you need&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;writeup&quot;&gt;Writeup&lt;/h3&gt;
+&lt;p&gt;Given &lt;a href=&quot;https://github.com/malladisiddu/Crypto-writeups/blob/master/inctfi2020/PolyRSA/out.txt&quot;&gt;out.txt&lt;/a&gt; which consists of&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;p&lt;/li&gt;
+  &lt;li&gt;n (as polynomial)&lt;/li&gt;
+  &lt;li&gt;m^65537 (ciphertext also as polynomial)
+To be honest, I never solved an RSA challenge based polynomials. So I checked for similar challenges which I couldn’t find, but I found one research paper from which I was able to solve this challenge.
+It is just similar to integer RSA, instead of numbers we have here polynomials. Here the toient function is
+    &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;s = (p^m-1)*(p^n-1)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+    &lt;p&gt;where &lt;code class=&quot;highlighter-rouge&quot;&gt;m&lt;/code&gt; &amp;amp; &lt;code class=&quot;highlighter-rouge&quot;&gt;n&lt;/code&gt; are the degree of the two irreducible polynomials reduced from modulus(n)&lt;/p&gt;
+    &lt;h3 id=&quot;the-vulnerability&quot;&gt;The Vulnerability&lt;/h3&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Given n is factorizable.
+Here is my exploit,
+```python
+p = 2470567871
+P.&lt;x&gt; = PolynomialRing(GF(p))
+e = 65537
+n = 1932231392*x^255 + 1432733708*x^254 + 1270867914*x^253 + 1573324635*x^252 + 2378103997*x^251 + 820889786*x^250 + 762279735*x^249 + 1378353578*x^248 + 1226179520*x^247 + 657116276*x^246 + 1264717357*x^245 + 1015587392*x^244 + 849699356*x^243 + 1509168990*x^242 + 2407367106*x^241 + 873379233*x^240 + 2391647981*x^239 + 517715639*x^238 + 828941376*x^237 + 843708018*x^236 + 1526075137*x^235 + 1499291590*x^234 + 235611028*x^233 + 19615265*x^232 + 53338886*x^231 + 434434839*x^230 + 902171938*x^229 + 516444143*x^228 + 1984443642*x^227 + 966493372*x^226 + 1166227650*x^225 + 1824442929*x^224 + 930231465*x^223 + 1664522302*x^222 + 1067203343*x^221 + 28569139*x^220 + 2327926559*x^219 + 899788156*x^218 + 296985783*x^217 + 1144578716*x^216 + 340677494*x^215 + 254306901*x^214 + 766641243*x^213 + 1882320336*x^212 + 2139903463*x^211 + 1904225023*x^210 + 475412928*x^209 + 127723603*x^208 + 2015416361*x^207 + 1500078813*x^206 + 1845826007*x^205 + 797486240*x^204 + 85924125*x^203 + 1921772796*x^202 + 1322682658*x^201 + 2372929383*x^200 + 1323964787*x^199 + 1302258424*x^198 + 271875267*x^197 + 1297768962*x^196 + 2147341770*x^195 + 1665066191*x^194 + 2342921569*x^193 + 1450622685*x^192 + 1453466049*x^191 + 1105227173*x^190 + 2357717379*x^189 + 1044263540*x^188 + 697816284*x^187 + 647124526*x^186 + 1414769298*x^185 + 657373752*x^184 + 91863906*x^183 + 1095083181*x^182 + 658171402*x^181 + 75339882*x^180 + 2216678027*x^179 + 2208320155*x^178 + 1351845267*x^177 + 1740451894*x^176 + 1302531891*x^175 + 320751753*x^174 + 1303477598*x^173 + 783321123*x^172 + 1400145206*x^171 + 1379768234*x^170 + 1191445903*x^169 + 946530449*x^168 + 2008674144*x^167 + 2247371104*x^166 + 1267042416*x^165 + 1795774455*x^164 + 1976911493*x^163 + 167037165*x^162 + 1848717750*x^161 + 573072954*x^160 + 1126046031*x^159 + 376257986*x^158 + 1001726783*x^157 + 2250967824*x^156 + 2339380314*x^155 + 571922874*x^154 + 961000788*x^153 + 306686020*x^152 + 80717392*x^151 + 2454799241*x^150 + 1005427673*x^149 + 1032257735*x^148 + 593980163*x^147 + 1656568780*x^146 + 1865541316*x^145 + 2003844061*x^144 + 1265566902*x^143 + 573548790*x^142 + 494063408*x^141 + 1722266624*x^140 + 938551278*x^139 + 2284832499*x^138 + 597191613*x^137 + 476121126*x^136 + 1237943942*x^135 + 275861976*x^134 + 1603993606*x^133 + 1895285286*x^132 + 589034062*x^131 + 713986937*x^130 + 1206118526*x^129 + 311679750*x^128 + 1989860861*x^127 + 1551409650*x^126 + 2188452501*x^125 + 1175930901*x^124 + 1991529213*x^123 + 2019090583*x^122 + 215965300*x^121 + 532432639*x^120 + 1148806816*x^119 + 493362403*x^118 + 2166920790*x^117 + 185609624*x^116 + 184370704*x^115 + 2141702861*x^114 + 223551915*x^113 + 298497455*x^112 + 722376028*x^111 + 678813029*x^110 + 915121681*x^109 + 1107871854*x^108 + 1369194845*x^107 + 328165402*x^106 + 1792110161*x^105 + 798151427*x^104 + 954952187*x^103 + 471555401*x^102 + 68969853*x^101 + 453598910*x^100 + 2458706380*x^99 + 889221741*x^98 + 320515821*x^97 + 1549538476*x^96 + 909607400*x^95 + 499973742*x^94 + 552728308*x^93 + 1538610725*x^92 + 186272117*x^91 + 862153635*x^90 + 981463824*x^89 + 2400233482*x^88 + 1742475067*x^87 + 437801940*x^86 + 1504315277*x^85 + 1756497351*x^84 + 197089583*x^83 + 2082285292*x^82 + 109369793*x^81 + 2197572728*x^80 + 107235697*x^79 + 567322310*x^78 + 1755205142*x^77 + 1089091449*x^76 + 1993836978*x^75 + 2393709429*x^74 + 170647828*x^73 + 1205814501*x^72 + 2444570340*x^71 + 328372190*x^70 + 1929704306*x^69 + 717796715*x^68 + 1057597610*x^67 + 482243092*x^66 + 277530014*x^65 + 2393168828*x^64 + 12380707*x^63 + 1108646500*x^62 + 637721571*x^61 + 604983755*x^60 + 1142068056*x^59 + 1911643955*x^58 + 1713852330*x^57 + 1757273231*x^56 + 1778819295*x^55 + 957146826*x^54 + 900005615*x^53 + 521467961*x^52 + 1255707235*x^51 + 861871574*x^50 + 397953653*x^49 + 1259753202*x^48 + 471431762*x^47 + 1245956917*x^46 + 1688297180*x^45 + 1536178591*x^44 + 1833258462*x^43 + 1369087493*x^42 + 459426544*x^41 + 418389643*x^40 + 1800239647*x^39 + 2467433889*x^38 + 477713059*x^37 + 1898813986*x^36 + 2202042708*x^35 + 894088738*x^34 + 1204601190*x^33 + 1592921228*x^32 + 2234027582*x^31 + 1308900201*x^30 + 461430959*x^29 + 718926726*x^28 + 2081988029*x^27 + 1337342428*x^26 + 2039153142*x^25 + 1364177470*x^24 + 613659517*x^23 + 853968854*x^22 + 1013582418*x^21 + 1167857934*x^20 + 2014147362*x^19 + 1083466865*x^18 + 1091690302*x^17 + 302196939*x^16 + 1946675573*x^15 + 2450124113*x^14 + 1199066291*x^13 + 401889502*x^12 + 712045611*x^11 + 1850096904*x^10 + 1808400208*x^9 + 1567687877*x^8 + 2013445952*x^7 + 2435360770*x^6 + 2414019676*x^5 + 2277377050*x^4 + 2148341337*x^3 + 1073721716*x^2 + 1045363399*x + 1809685811
+c = 1208612545*x^254 + 1003144104*x^253 + 1173365710*x^252 + 1528252326*x^251 + 2263767409*x^250 + 2030579621*x^249 + 820048372*x^248 + 1474305505*x^247 + 1313951805*x^246 + 191260021*x^245 + 687901467*x^244 + 231907128*x^243 + 1757265648*x^242 + 1536859261*x^241 + 97792274*x^240 + 86150615*x^239 + 2283802022*x^238 + 728791370*x^237 + 1402241073*x^236 + 2010876897*x^235 + 1112960608*x^234 + 1785301939*x^233 + 862124720*x^232 + 573190801*x^231 + 1353395115*x^230 + 1041912948*x^229 + 1592516519*x^228 + 2043096090*x^227 + 970437868*x^226 + 945296597*x^225 + 764979415*x^224 + 151795004*x^223 + 744776063*x^222 + 49064457*x^221 + 379720326*x^220 + 549708067*x^219 + 1278937325*x^218 + 1348751857*x^217 + 897039278*x^216 + 1738651055*x^215 + 1458044806*x^214 + 947593966*x^213 + 604294495*x^212 + 1101712128*x^211 + 1106608879*x^210 + 556697284*x^209 + 339078898*x^208 + 135886774*x^207 + 682237064*x^206 + 1298394254*x^205 + 2038363686*x^204 + 1138996508*x^203 + 321551693*x^202 + 1194023535*x^201 + 1627100598*x^200 + 581786959*x^199 + 209400153*x^198 + 1354413890*x^197 + 1689568849*x^196 + 1038349567*x^195 + 2129265853*x^194 + 96150366*x^193 + 1879712323*x^192 + 140146576*x^191 + 855348682*x^190 + 571231503*x^189 + 1759489757*x^188 + 1528175919*x^187 + 1420729777*x^186 + 1778060705*x^185 + 204520875*x^184 + 2409946047*x^183 + 1703900286*x^182 + 379350638*x^181 + 145936788*x^180 + 644037909*x^179 + 946490870*x^178 + 2143460817*x^177 + 2124654819*x^176 + 735909283*x^175 + 1956333192*x^174 + 69508572*x^173 + 1998473705*x^172 + 2219097711*x^171 + 2324764950*x^170 + 1295835297*x^169 + 475763021*x^168 + 124896627*x^167 + 392652227*x^166 + 2414019050*x^165 + 519556546*x^164 + 2379934828*x^163 + 74942046*x^162 + 2333943359*x^161 + 5807728*x^160 + 1572302913*x^159 + 933057583*x^158 + 2327572070*x^157 + 2174172163*x^156 + 326654947*x^155 + 2362777406*x^154 + 1571381551*x^153 + 818720017*x^152 + 564409161*x^151 + 784212625*x^150 + 2084631116*x^149 + 1709163682*x^148 + 1791572159*x^147 + 2362306858*x^146 + 1870950847*x^145 + 936293454*x^144 + 1992907305*x^143 + 2427866610*x^142 + 1377299939*x^141 + 2336147340*x^140 + 419537038*x^139 + 1775945090*x^138 + 1084486367*x^137 + 1628708302*x^136 + 624109245*x^135 + 1140675451*x^134 + 848915999*x^133 + 1380203834*x^132 + 103496883*x^131 + 81739774*x^130 + 2055692293*x^129 + 1586687843*x^128 + 1682316161*x^127 + 134734383*x^126 + 885001299*x^125 + 2466212723*x^124 + 137905246*x^123 + 2305925724*x^122 + 410043787*x^121 + 2154453335*x^120 + 2018367068*x^119 + 1967315089*x^118 + 220606010*x^117 + 1066579186*x^116 + 2022385524*x^115 + 1564928688*x^114 + 851080667*x^113 + 1683812556*x^112 + 672848621*x^111 + 646553151*x^110 + 1348955204*x^109 + 1543570099*x^108 + 2260622184*x^107 + 1111757240*x^106 + 1797688791*x^105 + 1307761272*x^104 + 179896670*x^103 + 1197947306*x^102 + 1792231092*x^101 + 1515817157*x^100 + 1510541452*x^99 + 1784535666*x^98 + 1755403646*x^97 + 2388416288*x^96 + 1913808879*x^95 + 2139772089*x^94 + 1373043969*x^93 + 900021127*x^92 + 1613888837*x^91 + 331160696*x^90 + 2404083812*x^89 + 448818904*x^88 + 592910594*x^87 + 2436296390*x^86 + 2103089380*x^85 + 2027661376*x^84 + 277165788*x^83 + 717390488*x^82 + 319876555*x^81 + 1394843317*x^80 + 2314542109*x^79 + 2295617403*x^78 + 313842193*x^77 + 1918458371*x^76 + 1189324530*x^75 + 1765150225*x^74 + 1107038066*x^73 + 613811679*x^72 + 578744934*x^71 + 538203467*x^70 + 1710976133*x^69 + 1681208001*x^68 + 462043988*x^67 + 299437516*x^66 + 1843758398*x^65 + 851754779*x^64 + 1850189150*x^63 + 710529550*x^62 + 922473306*x^61 + 2344816934*x^60 + 54182289*x^59 + 2394694981*x^58 + 1849818608*x^57 + 1926799414*x^56 + 950266030*x^55 + 1290713338*x^54 + 1851455277*x^53 + 1607851092*x^52 + 1587576465*x^51 + 2279226257*x^50 + 1637387507*x^49 + 779327218*x^48 + 919124653*x^47 + 1126060258*x^46 + 2304179492*x^45 + 77984480*x^44 + 966167063*x^43 + 402292668*x^42 + 1332816563*x^41 + 524746316*x^40 + 2427530022*x^39 + 677075099*x^38 + 755256194*x^37 + 2152433299*x^36 + 2197374397*x^35 + 2290208129*x^34 + 996810109*x^33 + 101994796*x^32 + 252415814*x^31 + 1964967972*x^30 + 1533782356*x^29 + 1034980624*x^28 + 816216163*x^27 + 1535614986*x^26 + 1835762944*x^25 + 1147606118*x^24 + 1189426347*x^23 + 33594119*x^22 + 2113251273*x^21 + 826059142*x^20 + 1074101610*x^19 + 1638140405*x^18 + 1633380033*x^17 + 2005588694*x^16 + 2087514746*x^15 + 768034353*x^14 + 104476320*x^13 + 483234608*x^12 + 2424146196*x^11 + 49841203*x^10 + 145673059*x^9 + 705090263*x^8 + 1832451737*x^7 + 2394175351*x^6 + 1966712784*x^5 + 276537935*x^4 + 499607533*x^3 + 1981107449*x^2 + 776654074*x + 886398299
+q1, q2 = n.factor()
+q1, q2 = q1[0], q2[0]
+s = (p^q1.degree() - 1) * (p^q2.degree() - 1)
+d = inverse_mod(e, s)
+m = pow(c, d, n)
+flag = bytearray(m)&lt;/x&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;print(“Flag: “,flag.decode())
+```&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Flag&lt;/strong&gt;: &lt;code class=&quot;highlighter-rouge&quot;&gt;inctf{and_i_4m_ir0n_m4n}&lt;/code&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+&lt;h3 id=&quot;reference&quot;&gt;Reference&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&quot;http://www.diva-portal.se/smash/get/diva2:823505/FULLTEXT01.pdf&quot;&gt;Polynomial RSA&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Please send your feedback, queries, suggestions via twitter &lt;a href=&quot;https://twitter.com/st0ic3r&quot;&gt;@st0ic3r&lt;/a&gt;.&lt;/p&gt;
+</description>
+        <pubDate>Sun, 02 Aug 2020 00:00:00 +0530</pubDate>
+        <link>http://localhost:4000/teamweb/crypto/ctf/rsa/2020/08/02/inctf-2020-writeups.html</link>
+        <guid isPermaLink="true">http://localhost:4000/teamweb/crypto/ctf/rsa/2020/08/02/inctf-2020-writeups.html</guid>
+        
+        
+        <category>crypto</category>
+        
+        <category>ctf</category>
+        
+        <category>rsa</category>
+        
+      </item>
+    
+  </channel>
+</rss>

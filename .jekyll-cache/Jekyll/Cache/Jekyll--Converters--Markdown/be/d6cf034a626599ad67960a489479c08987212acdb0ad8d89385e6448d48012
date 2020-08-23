@@ -1,0 +1,128 @@
+I"`<p><img src="/images/ascwg/logo.png" alt="logo" /></p>
+<h1 id="introduction">Introduction</h1>
+
+<p>This CTF was the Qualifier to the finals, and rev was pretty easy. Anyways, for people that might not have understood how to solve certain challenges, this writeup is for them.</p>
+
+<h2 id="check">Check</h2>
+
+<p>TL;DR: Manipulate environment variables for fun and flags</p>
+
+<p>I got this challenge while the main server was down, in the github. Let’s take a quick look in IDA.</p>
+
+<p><img src="/images/ascwg/rev/1.png" alt="The important function" /></p>
+
+<p>We can see that it uses <code class="highlighter-rouge">getenv</code> to get the value of some environment variable, and then it XOR decodes the actual value that it needs to be. The XOR’ing happens in functions like this one.</p>
+
+<p><img src="/images/ascwg/rev/2.png" alt="XOR'ing function" /></p>
+
+<p>There was no actual need to find out what it’s XOR’ing with, because in the end, there’s a strcmp with the input value anyways, so this didn’t require a lot of thinking.
+By decoding the values in this way, we get the following values for the environment variables:</p>
+
+<p><code class="highlighter-rouge">HOSTNAME=Machine</code></p>
+
+<p><code class="highlighter-rouge">USER=reenigne</code></p>
+
+<p>Sure enough,</p>
+
+<p><img src="/images/ascwg/rev/3.png" alt="Result" /></p>
+
+<p>The flag is <code class="highlighter-rouge">ASCWG{3nv_v4r5_4r3_u53ful}</code></p>
+
+<h2 id="doom">DOOM</h2>
+
+<p>TL;DR: Crack an MD5 Hash.</p>
+
+<p>Once you open the binary in IDA, you see the helpfully named functions, <code class="highlighter-rouge">main</code>, <code class="highlighter-rouge">getString</code>, <code class="highlighter-rouge">printFlag</code>, and <code class="highlighter-rouge">verifyFlag</code>. Getting to verifyFlag isn’t that hard, either. Just change <code class="highlighter-rouge">EIP</code> at the right moment and you’re good to go!</p>
+
+<p>The binary reads a file called string.txt, probably where we need to put the flag to check it.</p>
+
+<p><img src="/images/ascwg/rev/4.png" alt="readString" /></p>
+
+<p>Here, we can see the binary taking the MD5 of something, probably our input.</p>
+
+<p><img src="/images/ascwg/rev/5.png" alt="MD5" /></p>
+
+<p>This is what it’s comparing it with:</p>
+
+<p><img src="/images/ascwg/rev/6.png" alt="actual hash" /></p>
+
+<p>Now it’s just a matter of getting the hash and cracking it.</p>
+
+<p>The hash is <code class="highlighter-rouge">B9448DD62F8F39451767741F799C8D8B</code> and crackstation tells me that it’s an MD5 hash of <code class="highlighter-rouge">apocolypsedoomsday</code>. Bingo!</p>
+
+<p>Sure enough, the flag is <code class="highlighter-rouge">ASCWG{apocolypsedoomsday}</code>.</p>
+
+<p><img src="/images/ascwg/rev/7.png" alt="flag found" /></p>
+
+<h2 id="key">Key</h2>
+
+<p>This one was a rust challenge in Windows, and I suck at both. It was therefore kinda reassuring that me studying this stuff had an effect.</p>
+
+<p>Since this is a rust chall, there’s a lot of stuff happening. The most important parts are often hidden somewhere deep in the code. I’m a noob and not competent at stuff like Lighthouse, and so I decided to not learn something in the middle of a CTF and go with my guts.</p>
+
+<p>This binary seems to be asking for parameters from argv, and therefore, I put 16 bits of input.</p>
+
+<p>Now, onto the interesting bit:</p>
+
+<p>Somewhere deep in the function, we come across this bit of code:</p>
+
+<p><img src="/images/ascwg/rev/8.png" alt="checker" /></p>
+
+<p>Now, to my non-rust-programmer head, this looked exactly like a checker in C:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>if(!cond1){
+    if(!cond2){
+        if(!cond3){
+            // fail
+        }   
+    }
+}
+else{
+   // goodboy
+}
+</code></pre></div></div>
+<p>Therefore, I decided to make sense of it and make a Z3py script to take care of the majority of finding out the values.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>from z3 import Int, Solver, solve, Xor, BitVec, And
+
+a = [BitVec('a%s' %i,16) for i in range(16)]
+s = Solver()
+
+s.add(a[0] == 2*a[7])
+s.add(a[1] == 48)
+s.add(a[2] == 52)
+s.add(a[3] == 50)
+s.add(a[9] == 38)
+s.add(a[4] == a[7] - 7)
+s.add(a[4] &amp; 0xf4 == 36)
+s.add(0x5a ^ a[5] == 113)
+s.add(a[7] == 45)
+s.add(a[6] == (a[5] | 0x7e))
+s.add(a[8] == 66)
+s.add(a[10] == 83)
+s.add(a[11] == 92)
+s.add(a[12] + a[6] == 0x89) #-119?
+s.add(a[13] == (0x5a &amp; 0x26 ^ 0x42))
+s.add(a[14] == 40)
+s.add(a[15] == 41)
+
+
+print(s.check())
+print(s.model())
+m = s.model()
+
+b= []
+for i in range(16):
+    b.append(chr(int(m[a[i]].as_string())))
+c = ''.join(b)
+print(c)
+for i in range(16):
+    print(i,b[i])
+</code></pre></div></div>
+
+<p>Now, if you run this script, you’ll find that a[6] and a[12] are left undefined. That’s because I couldn’t figure out a way to statically get those values, and had to get it using other ways, i.e., dynamic debugging.</p>
+
+<p>Anyways, the key turns out to be <code class="highlighter-rouge">Z042&amp;+~-B&amp;S\/@()</code> and the flag is <code class="highlighter-rouge">ASCWG{RustyRevEngineer}</code>.</p>
+
+<p><img src="/images/ascwg/rev/9.png" alt="done" /></p>
+:ET

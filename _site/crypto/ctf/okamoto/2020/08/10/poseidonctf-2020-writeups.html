@@ -1,0 +1,286 @@
+<!DOCTYPE HTML>
+<!--
+  Solid State by HTML5 UP
+  html5up.net | @ajlkn
+  Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>PoseidonCTF 2020 writeups</title>
+  <meta name="description" content="Challenge: discrete log  I heard some cryptosystem uses discrete logarithm.     It is hard problem, isn’t it?     I encrypted the flag with 4095bit modulus… ...">
+
+  <link rel="stylesheet" href="/teamweb/css/main.css">
+  <link rel="canonical" href="http://localhost:4000/teamweb/crypto/ctf/okamoto/2020/08/10/poseidonctf-2020-writeups.html">
+  <link rel="alternate" type="application/rss+xml" title="c0d3_h4cki05_" href="http://localhost:4000/teamweb/feed.xml">
+
+  <!--[if lte IE 8]><script src="/js/ie/html5shiv.js"></script><![endif]-->
+  <!--[if lte IE 9]><link rel="stylesheet" href="/css/ie9.css" /><![endif]-->
+  <!--[if lte IE 8]><link rel="stylesheet" href="/css/ie8.css" /><![endif]-->
+</head>
+  <body>
+    <div id="page-wrapper">
+      <!-- Header -->
+      <header id="header" class="alt">
+  <h1><a href="/teamweb/">c0d3_h4cki05_</a></h1>
+  <nav>
+    <a href="#menu">Menu</a>
+  </nav>
+</header>
+
+<!-- Menu -->
+<nav id="menu">
+  <div class="inner">
+    <h2>Menu</h2>
+    <ul class="links">
+      <li><a href="/teamweb/index.html">Home</a></li>
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+      <li><a href="#">Log In</a></li>
+      <li><a href="#">Sign Up</a></li>
+    </ul>
+    <a href="#" class="close">Close</a>
+  </div>
+</nav>
+
+<!-- Banner -->
+<section id="banner">
+  <div class="inner">
+    <div class="logo"><span class="icon fa-diamond"></span></div>
+    <h2>c0d3_h4cki05_</h2>
+    <p>A CTF team from Amrita, Bengaluru
+</p>
+  </div>
+</section>
+      <!-- Wrapper -->
+      <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<!-- Wrapper -->
+	<section id="wrapper">
+		<header>
+			<div class="inner">
+				<h2>PoseidonCTF 2020 writeups</h2>
+				<p class="post-meta"><time datetime="2020-08-10T00:00:00+05:30" itemprop="datePublished">Aug 10, 2020</time></p>
+				<p></p>
+			</div>
+		</header>
+
+		<!-- Content -->
+			<div class="wrapper">
+				<div class="inner">
+
+					<p><img src="/images/poseidon/logo.png" alt="logo" /></p>
+<h2 id="challenge-discrete-log">Challenge: discrete log</h2>
+<blockquote>
+  <p>I heard some cryptosystem uses discrete logarithm. <br />
+    It is hard problem, isn’t it? <br />
+    I encrypted the flag with 4095bit modulus… <br />
+    Author : kiona</p>
+</blockquote>
+
+<p><a href="https://github.com/malladisiddu/Crypto-writeups/blob/master/PoseidonCTF/discrete%20log/output.txt">output.txt</a> <a href="https://github.com/malladisiddu/Crypto-writeups/blob/master/PoseidonCTF/discrete%20log/problem.py">problem.py</a></p>
+
+<p>Given generator, modulus and ciphertext</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>g = 172749132303451034825184289722866887646478207718904031630914096520683022158034517117605936723970812800902379716660696042889559048647206589145869496198395421965440272135852383965230458163451729744948637995163776071512309614027603968693250321092562108610034043037860044795655266224453184735452048413623769098671844195106558284409006269382544367448145088128499405797694142037310933061698125568790497068516077791616445318819525778890129259953967830407023305805724947609041398183006524760589480514375528363943261764527906775893795625189651746165941438248136930298545695110631212696683271254403308539994170329875688236599305478130030194371971383054083049610267982461416568688720562725217837462387935392946474596966349477680685726377666929540130924122398746591270899232208239961618302848348129375606841006687727574503519146164506867574157671109933022528435615415554171024171300585408907077259610240139419075684581512703943171162496513070572546968852202777002845137863414028314025114932581655385254082418111977242759980115915504202336380850329162861826132885827910210346708045087589916666711356848614195462267049823085141386868421005551877773672329046391854000523197388175515628464457551891476514779819019668102328395639607489673081022505099
+n = 204964538005458094391574690738766104196067587947267165575341074475716043971842449550067337731195102944823593489101699510575531541895593939634478254160200896755891641047742120885540191258962212405226135805491196590351987106011483652123110409148411537235255207358696047015199616340882291357173918540392964501976492251077110794432722042202109934588262870543755493029748475008610896164870659893013085704495216717998116109896882952474884270785733861739050889113464275228554841649603978281963688294995328883256317404081735364738985601286409677647577052211093127231530844271726386293348738817021732679704754961436390654856963930636538653822714234978179695778198536592408645222590877027896792957778186555118729335564281356291031440583078132397563914801937048297147819254611598144027963328749607393168101280779708669908245620694587176737529113823312930871616550632035759346759393976128246210013752530912953330415598837661326422094379798718827988692760848583517436061574821754507293943235476923624688378441177770313101393581916112910947153305055575974237171438666919114843946573283829704010962833299593770650238349021406868347635157566404829030358844616367849771415905381318344903398551946493709551783771889575282972265629264217620138873678733
+enc = 58749077215207190492371298843854826665007067693641554277597021927783439106518176607848876784025881251057880587477892585242567469682290542409002363284991521084199535617805983767364935247518813883871587009725229910084882524866335007624383374126379502610933045897762967063766174922757656816300993939273687091280630401460905159739072179134897626330594985795970230333335492872721173603390854317323095769925904629970032658376378937924244589208035572848434030889091930182042226202356340798415809817722086119981262671540923062830870681500341640178082497128371291359953884993700348396920219975667972939044100089402796215197615549948516999318565775626034391795498234335228509335613253342179818268681240653806015040771731154600343889814141382273506238199460016081871283682838719833841393528105371834961952754168257271394981634141286257602629174903644009990944563870674888760807045240859970974837258567236802649772719645362361127488126570702845624169598462415354350277654287009645871674305081755840523910495569765451437265785385267255452210836618705384598344351666486694835670072372776263570462639412759703397195350879217144135006968472391258993407007505079063659488976186871280542665310586453539153772026697145449262179967269376262891840972187
+</code></pre></div></div>
+<p>Also they gave the encryption function, <code class="highlighter-rouge">encrypt</code> function looks like a DLP</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">encrypt</span><span class="p">(</span><span class="n">pubkey</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+    <span class="n">g</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">pubkey</span>
+    <span class="n">msgint</span> <span class="o">=</span> <span class="n">bytes_to_long</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="n">encint</span> <span class="o">=</span> <span class="nb">pow</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">msgint</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">encint</span>
+</code></pre></div></div>
+<p>but the <code class="highlighter-rouge">keygen</code> function made me to think</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">keygen</span><span class="p">():</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">getPrime</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">p</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">&lt;&lt;</span><span class="mi">256</span><span class="p">)</span>
+    <span class="k">while</span> <span class="ow">not</span><span class="p">(</span><span class="n">isPrime</span><span class="p">(</span><span class="n">q</span><span class="p">)):</span>
+        <span class="n">q</span> <span class="o">+=</span> <span class="mi">2</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">p</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">q</span>
+    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="n">getRandomRange</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">pow</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">p</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">p</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">break</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">n</span><span class="p">),</span> <span class="n">p</span>
+</code></pre></div></div>
+<p>After a lot of googling I came to know that this is <strong>Okamoto-Uchiyama Cryptosystem</strong>.
+Encryption and Decryption of this cryptosystem is
+<img src="/images/poseidon/crypto/okamoto-cryptosystem.png" alt="okamoto-cryptosystem" /></p>
+
+<hr />
+<h2 id="the-vulnerability">The Vulnerability</h2>
+<ul>
+  <li>Given <code class="highlighter-rouge">modulus(n)</code> is factorizable
+I just used <code class="highlighter-rouge">factorint</code> function from <code class="highlighter-rouge">sympy</code> module to factorize <code class="highlighter-rouge">n</code>
+<img src="/images/poseidon/crypto/Nfactors.png" alt="Nfactors" /></li>
+</ul>
+
+<p>found <code class="highlighter-rouge">p</code> and <code class="highlighter-rouge">q</code></p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>p = 119651922772470381538865905053880240648981610788158704687128059461662288085281852229102200555108770317758154242404640572330743835298457861729905310772997229435609782100922883676187295581012547043047440427111941567355233755127540922309999250508616729587128520903493409357118622862418582616182347566040409411199
+q = 14316582623149216275107736834733631963084207821436746289501498129530929625521490902864194713174501986932485113452517074017970673917631950366223575922988112330159225019538408970690585920890359634920580740147682705722228172472753088442523496334194454100216062475928574494498461028671300195357832818313464997449224252250371444494034870771502023373906812804159280130560764590554712397821927029154370470286256319839500521932294332044793429751975782128661939509416939951784853574757157319178829932860446931760541284010213101009421074205053284557804760664567589983709792028490535528417695748683896268760352087789362996257933
+</code></pre></div></div>
+<p>and then it is just the implementaion of the Okamoto-Uchiyama decryption function</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">L</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">//</span><span class="n">p</span>
+ 
+<span class="k">def</span> <span class="nf">res</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span><span class="o">*</span><span class="p">(</span><span class="n">inverse</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">p</span><span class="p">))</span>
+</code></pre></div></div>
+<p>Here is my entire exploit,</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">Crypto.Util.number</span> <span class="kn">import</span> <span class="o">*</span>
+ 
+<span class="k">def</span> <span class="nf">L</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">//</span><span class="n">p</span>
+ 
+<span class="k">def</span> <span class="nf">res</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span><span class="o">*</span><span class="p">(</span><span class="n">inverse</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">p</span><span class="p">))</span>
+ 
+<span class="n">c</span> <span class="o">=</span> <span class="mi">58749077215207190492371298843854826665007067693641554277597021927783439106518176607848876784025881251057880587477892585242567469682290542409002363284991521084199535617805983767364935247518813883871587009725229910084882524866335007624383374126379502610933045897762967063766174922757656816300993939273687091280630401460905159739072179134897626330594985795970230333335492872721173603390854317323095769925904629970032658376378937924244589208035572848434030889091930182042226202356340798415809817722086119981262671540923062830870681500341640178082497128371291359953884993700348396920219975667972939044100089402796215197615549948516999318565775626034391795498234335228509335613253342179818268681240653806015040771731154600343889814141382273506238199460016081871283682838719833841393528105371834961952754168257271394981634141286257602629174903644009990944563870674888760807045240859970974837258567236802649772719645362361127488126570702845624169598462415354350277654287009645871674305081755840523910495569765451437265785385267255452210836618705384598344351666486694835670072372776263570462639412759703397195350879217144135006968472391258993407007505079063659488976186871280542665310586453539153772026697145449262179967269376262891840972187</span>
+<span class="n">h</span> <span class="o">=</span> <span class="mi">192159296555627848138161414610654352733622245828513614322558905012466816654671972346097031349358247386944424511091960135752048099269046885847641446796741613064870966394096441981877237249574049165705367669167590253669921614109896281214885058820658568816500100732681453444211847674759535008378374194993480547115821823335912615050292051256279172523837607469551836256962239888184563456599538614372245459275406829924636980200891002347949094452338295057936566802092897987034436798432255668134027785450435019827028246194944275199769383463418480308364744322755424547117446235150277184138127498378264607769444968098425004126534119633031782416338154206700571418961129558294523843396301309255007288131883140330133903142845213481400374474735503009522483093310190196533677052463898663664335601466576736766660069653426577599703983465231424213328004576799542685640229970843791383652407916322015680525012551700803266007630695432556193833095738633105291346190869220704720694903194134841015855846831167967421505059755562552192829873204697156419144842126864221399403808755229408562864151563522531949899106533620150563956994515272797108554534792421110378348245132961702004979121873575596258771082192565891916462803744544917961364375730965315938457364679</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">204964538005458094391574690738766104196067587947267165575341074475716043971842449550067337731195102944823593489101699510575531541895593939634478254160200896755891641047742120885540191258962212405226135805491196590351987106011483652123110409148411537235255207358696047015199616340882291357173918540392964501976492251077110794432722042202109934588262870543755493029748475008610896164870659893013085704495216717998116109896882952474884270785733861739050889113464275228554841649603978281963688294995328883256317404081735364738985601286409677647577052211093127231530844271726386293348738817021732679704754961436390654856963930636538653822714234978179695778198536592408645222590877027896792957778186555118729335564281356291031440583078132397563914801937048297147819254611598144027963328749607393168101280779708669908245620694587176737529113823312930871616550632035759346759393976128246210013752530912953330415598837661326422094379798718827988692760848583517436061574821754507293943235476923624688378441177770313101393581916112910947153305055575974237171438666919114843946573283829704010962833299593770650238349021406868347635157566404829030358844616367849771415905381318344903398551946493709551783771889575282972265629264217620138873678733</span>
+<span class="n">g</span> <span class="o">=</span> <span class="mi">172749132303451034825184289722866887646478207718904031630914096520683022158034517117605936723970812800902379716660696042889559048647206589145869496198395421965440272135852383965230458163451729744948637995163776071512309614027603968693250321092562108610034043037860044795655266224453184735452048413623769098671844195106558284409006269382544367448145088128499405797694142037310933061698125568790497068516077791616445318819525778890129259953967830407023305805724947609041398183006524760589480514375528363943261764527906775893795625189651746165941438248136930298545695110631212696683271254403308539994170329875688236599305478130030194371971383054083049610267982461416568688720562725217837462387935392946474596966349477680685726377666929540130924122398746591270899232208239961618302848348129375606841006687727574503519146164506867574157671109933022528435615415554171024171300585408907077259610240139419075684581512703943171162496513070572546968852202777002845137863414028314025114932581655385254082418111977242759980115915504202336380850329162861826132885827910210346708045087589916666711356848614195462267049823085141386868421005551877773672329046391854000523197388175515628464457551891476514779819019668102328395639607489673081022505099</span>
+<span class="n">p</span> <span class="o">=</span> <span class="mi">119651922772470381538865905053880240648981610788158704687128059461662288085281852229102200555108770317758154242404640572330743835298457861729905310772997229435609782100922883676187295581012547043047440427111941567355233755127540922309999250508616729587128520903493409357118622862418582616182347566040409411199</span>
+<span class="n">cp</span> <span class="o">=</span> <span class="nb">pow</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">p</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">p</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">gp</span> <span class="o">=</span> <span class="nb">pow</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">p</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">p</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+ 
+<span class="n">x</span> <span class="o">=</span> <span class="n">res</span><span class="p">(</span><span class="n">L</span><span class="p">(</span><span class="n">cp</span><span class="p">,</span> <span class="n">p</span><span class="p">),</span> <span class="n">L</span><span class="p">(</span><span class="n">gp</span><span class="p">,</span> <span class="n">p</span><span class="p">),</span> <span class="n">p</span><span class="p">)</span> <span class="o">%</span> <span class="n">p</span>
+<span class="k">print</span><span class="p">(</span><span class="n">long_to_bytes</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p><strong>Flag</strong>: <code class="highlighter-rouge">Poseidon{l064r17hm_fr0m_7h3_cycl1c_6r0up}</code></p>
+
+<p>Please post your comments in the comment section or you can ping me via twitter <a href="https://twitter.com/st0ic3r">@st0ci3r</a> for any queries, suggestions and feedback.</p>
+
+<hr />
+<h2 id="reference">Reference</h2>
+<p><a href="https://en.wikipedia.org/wiki/Okamoto%E2%80%93Uchiyama_cryptosystem">Okamoto-Uchiyama Cryptosystem</a></p>
+
+
+
+					<section class="features">
+	
+		
+			
+				<article>
+					<a href="/teamweb/z3/ctf/rev/cracking/2020/08/15/ascwg.html" class="image"><img src="/teamweb/" alt="" /></a>
+					<h3 class="major">Arab Security Cyber Wargames</h3>
+					<span>Aug 15, 2020</span>
+					<p></p>
+					<a href="/teamweb/z3/ctf/rev/cracking/2020/08/15/ascwg.html" class="special">Learn more</a>
+				</article>
+			
+		
+	
+		
+			
+				<article>
+					<a href="/teamweb/2020/08/15/arab-security-cyber-wargames.html" class="image"><img src="/teamweb/" alt="" /></a>
+					<h3 class="major">Arab Security Cyber Wargames</h3>
+					<span>Aug 15, 2020</span>
+					<p></p>
+					<a href="/teamweb/2020/08/15/arab-security-cyber-wargames.html" class="special">Learn more</a>
+				</article>
+			
+		
+	
+		
+	
+		
+			
+				<article>
+					<a href="/teamweb/z3/ctf/rev/2020/08/10/PoseidonCTF.html" class="image"><img src="/teamweb/" alt="" /></a>
+					<h3 class="major">PoseidonCTF</h3>
+					<span>Aug 10, 2020</span>
+					<p></p>
+					<a href="/teamweb/z3/ctf/rev/2020/08/10/PoseidonCTF.html" class="special">Learn more</a>
+				</article>
+			
+		
+	
+		
+			
+		
+	
+		
+			
+				<article>
+					<a href="/teamweb/crypto/ctf/rsa/2020/08/02/inctf-2020-writeups.html" class="image"><img src="/teamweb/" alt="" /></a>
+					<h3 class="major">InCTF 2020 writeups</h3>
+					<span>Aug 2, 2020</span>
+					<p></p>
+					<a href="/teamweb/crypto/ctf/rsa/2020/08/02/inctf-2020-writeups.html" class="special">Learn more</a>
+				</article>
+			
+		
+	
+</section>
+					
+				</div>
+			</div>
+	</section>
+</article>
+
+      <!-- Footer -->
+      <section id="footer">
+  <div class="inner">
+    <h2 class="major">Get in touch</h2>
+    <p></p>
+    <form method="post" action="http://formspree.io/bi0sbangalore@gmail.com">
+      <div class="field">
+        <label for="name">Name</label>
+        <input type="text" name="name" id="name" />
+      </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" name="email" id="email" />
+      </div>
+      <div class="field">
+        <label for="message">Message</label>
+        <textarea name="message" id="message" rows="4"></textarea>
+      </div>
+      <ul class="actions">
+        <li><input type="submit" value="Send Message" /></li>
+      </ul>
+    </form>
+    <ul class="contact">
+      <li class="fa-envelope"><a href="mailto:bi0sbangalore@gmail.com">bi0sbangalore@gmail.com</a></li>
+      
+      
+      
+      
+      
+      
+      <li class="fa-rss"><a href="/teamweb/feed.xml">subscribe via RSS</a></li>
+    </ul>
+    <ul class="copyright">
+      <li>&copy; . All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+    </ul>
+  </div>
+</section>
+    </div>
+  <!-- Scripts -->
+  <script src="/teamweb/js/skel.min.js"></script>
+<script src="/teamweb/js/jquery.min.js"></script>
+<script src="/teamweb/js/jquery.scrollex.min.js"></script>
+<script src="/teamweb/js/util.js"></script>
+<!--[if lte IE 8]><script src="/js/ie/respond.min.js"></script><![endif]-->
+<script src="/teamweb/js/main.js"></script>
+  </body>
+</html>

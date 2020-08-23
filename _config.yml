@@ -1,0 +1,28 @@
+# Welcome to Jekyll!
+#
+# This config file is meant for settings that affect your whole blog, values
+# which you are expected to set up once and rarely need to edit after that.
+# For technical reasons, this file is *NOT* reloaded automatically when you use
+# 'jekyll serve'. If you change this file, please restart the server process.
+
+# Site settings
+title: c0d3_h4cki05_
+description: > # this means to ignore newlines until "baseurl:"
+  A CTF team from Amrita, Bengaluru
+postsTitle: Our Writeups
+postsDescription: The writeups that we have written over the year.
+contactTitle: Get in touch
+contactDescription:
+baseurl: "/teamweb" # the subpath of your site, e.g. /blog
+url: "https://bi0sblr.tech" # the base hostname & protocol for your site
+copyright: 
+# Contact info
+email: bi0sbangalore@gmail.com
+twitter:
+facebook:
+instagram:
+youtube:
+mailingAddress:
+phone:
+# Build settings
+markdown: kramdown

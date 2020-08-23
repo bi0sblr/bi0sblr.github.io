@@ -1,0 +1,196 @@
+<!DOCTYPE HTML>
+<!--
+  Solid State by HTML5 UP
+  html5up.net | @ajlkn
+  Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>INCTFi 2020 Writeup</title>
+  <meta name="description" content="Challenge : BuggyWriteup:The challenge is about bypassing 403 error along with file upload vulneribility and LFI.When we entered the website there’s a login ...">
+
+  <link rel="stylesheet" href="/teamweb/css/main.css">
+  <link rel="canonical" href="http://localhost:4000/teamweb/blog/2020/08/03/buggy.html">
+  <link rel="alternate" type="application/rss+xml" title="c0d3_h4cki05_" href="http://localhost:4000/teamweb/feed.xml">
+
+  <!--[if lte IE 8]><script src="/js/ie/html5shiv.js"></script><![endif]-->
+  <!--[if lte IE 9]><link rel="stylesheet" href="/css/ie9.css" /><![endif]-->
+  <!--[if lte IE 8]><link rel="stylesheet" href="/css/ie8.css" /><![endif]-->
+</head>
+  <body>
+    <div id="page-wrapper">
+      <!-- Header -->
+      <header id="header" class="alt">
+  <h1><a href="/teamweb/">c0d3_h4cki05_</a></h1>
+  <nav>
+    <a href="#menu">Menu</a>
+  </nav>
+</header>
+
+<!-- Menu -->
+<nav id="menu">
+  <div class="inner">
+    <h2>Menu</h2>
+    <ul class="links">
+      <li><a href="/teamweb/index.html">Home</a></li>
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+      <li><a href="#">Log In</a></li>
+      <li><a href="#">Sign Up</a></li>
+    </ul>
+    <a href="#" class="close">Close</a>
+  </div>
+</nav>
+
+<!-- Banner -->
+<section id="banner">
+  <div class="inner">
+    <div class="logo"><span class="icon fa-diamond"></span></div>
+    <h2>c0d3_h4cki05_</h2>
+    <p>A CTF team from Amrita, Bengaluru
+</p>
+  </div>
+</section>
+      <!-- Wrapper -->
+      <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<!-- Wrapper -->
+	<section id="wrapper">
+		<header>
+			<div class="inner">
+				<h2>INCTFi 2020 Writeup</h2>
+				<p class="post-meta"><time datetime="2020-08-03T18:54:49+05:30" itemprop="datePublished">Aug 3, 2020</time> • <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span itemprop="name">ph03n1x</span></span></p>
+				<p></p>
+			</div>
+		</header>
+
+		<!-- Content -->
+			<div class="wrapper">
+				<div class="inner">
+
+					<h2 id="challenge--buggy">Challenge : Buggy</h2>
+
+<h3 id="writeup">Writeup:</h3>
+
+<p>The challenge is about bypassing 403 error along with file upload vulneribility and LFI.<br />
+When we entered the website there’s a login form and a link to register.
+After clicking on register we see a <code class="highlighter-rouge">403 Forbidden</code> error.</p>
+
+<p><img src="/assets/img/inctfi-2020/403.jpg" alt="error" /></p>
+
+<p>Looking at this, thought we can bypass it which is smuggling the request to get registered. After some googling i found a way to bypass it <code class="highlighter-rouge">/./register.php?username=ph03n1x&amp;password=ph03n1x</code><br />
+Intercepting the request with burp and forwarding it, our registration is successful.</p>
+
+<p><img src="/assets/img/inctfi-2020/Request.jpg" alt="burp" /></p>
+
+<p>Logging in, we find a file uploader which accepts any file extension. Uploading the file, it removes the uploaded file extension and convert the file name to a hash.
+I thought of getting a PHP Shell and uploaded a php file.<br />
+After uploading the php, there’s an option to <code class="highlighter-rouge">include</code> the file. We get a page with following details</p>
+<blockquote>
+  <p>The file has been uploaded to: /var/www/uploads/df0f1a1ac715de9266c8d8391769156a</p>
+
+  <p>To include the file, use ?include=</p>
+</blockquote>
+
+<p>Here we get <code class="highlighter-rouge">LFI</code> at <code class="highlighter-rouge">/../../../var/www/uploads/df0f1a1ac715de9266c8d8391769156a</code>
+This <code class="highlighter-rouge">include</code> option allows only the content of <code class="highlighter-rouge">http (or) https</code>.<br />
+The final payload for LFI will be <code class="highlighter-rouge">/index.php?include=http:/../../../var/www/uploads/df0f1a1ac715de9266c8d8391769156a</code><br />
+After getting the shell, <code class="highlighter-rouge">cat</code> the files in directory.<br />
+The flag is in <code class="highlighter-rouge">config.php</code>.</p>
+
+<p><strong><em>Flag: <code class="highlighter-rouge">inctf{REQU357_5MUGG71NG_4ND_1NCLUD3_F0R_TH3_W1N}</code></em></strong></p>
+
+
+					<section class="features">
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+	
+		
+			
+		
+	
+</section>
+					
+				</div>
+			</div>
+	</section>
+</article>
+
+      <!-- Footer -->
+      <section id="footer">
+  <div class="inner">
+    <h2 class="major">Get in touch</h2>
+    <p></p>
+    <form method="post" action="http://formspree.io/bi0sbangalore@gmail.com">
+      <div class="field">
+        <label for="name">Name</label>
+        <input type="text" name="name" id="name" />
+      </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" name="email" id="email" />
+      </div>
+      <div class="field">
+        <label for="message">Message</label>
+        <textarea name="message" id="message" rows="4"></textarea>
+      </div>
+      <ul class="actions">
+        <li><input type="submit" value="Send Message" /></li>
+      </ul>
+    </form>
+    <ul class="contact">
+      <li class="fa-envelope"><a href="mailto:bi0sbangalore@gmail.com">bi0sbangalore@gmail.com</a></li>
+      
+      
+      
+      
+      
+      
+      <li class="fa-rss"><a href="/teamweb/feed.xml">subscribe via RSS</a></li>
+    </ul>
+    <ul class="copyright">
+      <li>&copy; . All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+    </ul>
+  </div>
+</section>
+    </div>
+  <!-- Scripts -->
+  <script src="/teamweb/js/skel.min.js"></script>
+<script src="/teamweb/js/jquery.min.js"></script>
+<script src="/teamweb/js/jquery.scrollex.min.js"></script>
+<script src="/teamweb/js/util.js"></script>
+<!--[if lte IE 8]><script src="/js/ie/respond.min.js"></script><![endif]-->
+<script src="/teamweb/js/main.js"></script>
+  </body>
+</html>

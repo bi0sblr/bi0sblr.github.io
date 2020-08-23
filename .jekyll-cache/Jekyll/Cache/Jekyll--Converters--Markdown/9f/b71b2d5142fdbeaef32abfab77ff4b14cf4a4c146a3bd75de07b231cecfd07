@@ -1,0 +1,40 @@
+I"l<p><img src="/images/ascwg/ascscoreboard.png" alt="scoreboard" />
+First things first, Arab Security Cyber Wargames is a qualifiers CTF, Top 10 would be qualified for the finals at Egypt.
+We <a href="https://ctftime.org/team/72702">c0d3_h4cki05_</a>(aka bi0s|Bangalore) finished 10th globally, hence we qualified for finals!
+Yay!</p>
+
+<p>In this blog post I will be discussing 2 crypto challenges from Arab Security Wargames CTF Quals. As there are some intial glitches with the server, they shared the challenges <a href="https://github.com/ascwg/Challenges">repo</a> in the discord server, so we were able to work on the challenges even though there were some glitches.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">S.No.</th>
+      <th style="text-align: center">Challenge</th>
+      <th style="text-align: center">Points</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center"><a href="https://github.com/ascwg/Challenges/tree/master/Crypto/Challenge%203">Challenge 3</a></td>
+      <td style="text-align: center">600</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">3</td>
+      <td style="text-align: center"><a href="https://github.com/ascwg/Challenges/tree/master/Crypto/Challenge%205">Challenge 5</a></td>
+      <td style="text-align: center">300</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="challenge-3">Challenge 3</h2>
+<blockquote>
+  <p><a href="https://github.com/malladisiddu/Crypto-writeups/blob/master/ascwgctf/challenge3/output.txt">output.txt</a></p>
+</blockquote>
+
+<p>Given <code class="highlighter-rouge">output.txt</code> consists of Public Key (<code class="highlighter-rouge">n</code> &amp; <code class="highlighter-rouge">e</code>) and ciphertext <code class="highlighter-rouge">c</code></p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>n = 2318754427090927622417300593014303163027836982793164162950666250489681094136583599882469330682357229700000166714186122335692872792460409101465630110622887313064657894574037981904943176292533073634387002369380564791579428603519429963490374738649708747360755590037132507998435966068658633431918622092817702780128462915129741083129108481836485937804951555271147615962278158353917059561029043381242474374972583682945918237047674797098894662717409552897418650427548642489575961500481014997803061734956091625431696419759919121068387038071453059311371255995535187052409462363525765654622645413142987775053860188260137197659
+e = 65537
+c = 1852258477078452495280071169336816541669321769289372837198526954361460776833319048556839287633046754304414868057993901219892835088957705515939202089076460374548771033553266251154753679870528816210706553445963568771841753267644973871132621342897934474998162148362874305941012572949171990616677298854465965898581914403406403426504250013897086136105989549801404176555930509653029014518314103310549883855327513190607775750086851774949594618287441246861446444592130784569563671269161854267497652454746479173284327272563799067627736512266913669944284375302659511122504002144054772208775215907860036195680830269422876824977
+</code></pre></div></div>
+:ET
