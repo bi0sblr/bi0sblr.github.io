@@ -4,10 +4,10 @@
     <title>c0d3_h4cki05_</title>
     <description>A CTF team from Amrita, Bengaluru
 </description>
-    <link>http://localhost:4000/teamweb/</link>
-    <atom:link href="http://localhost:4000/teamweb/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Sun, 23 Aug 2020 22:06:01 +0530</pubDate>
-    <lastBuildDate>Sun, 23 Aug 2020 22:06:01 +0530</lastBuildDate>
+    <link>http://localhost:4000/</link>
+    <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Sun, 23 Aug 2020 22:21:16 +0530</pubDate>
+    <lastBuildDate>Sun, 23 Aug 2020 22:21:16 +0530</lastBuildDate>
     <generator>Jekyll v4.0.0</generator>
     
       <item>
@@ -141,8 +141,8 @@ for i in range(16):
 &lt;p&gt;&lt;img src=&quot;/images/ascwg/rev/9.png&quot; alt=&quot;done&quot; /&gt;&lt;/p&gt;
 </description>
         <pubDate>Sat, 15 Aug 2020 00:00:00 +0530</pubDate>
-        <link>http://localhost:4000/teamweb/z3/ctf/rev/cracking/2020/08/15/ascwg.html</link>
-        <guid isPermaLink="true">http://localhost:4000/teamweb/z3/ctf/rev/cracking/2020/08/15/ascwg.html</guid>
+        <link>http://localhost:4000/z3/ctf/rev/cracking/2020/08/15/ascwg.html</link>
+        <guid isPermaLink="true">http://localhost:4000/z3/ctf/rev/cracking/2020/08/15/ascwg.html</guid>
         
         
         <category>z3</category>
@@ -334,8 +334,8 @@ Check out the weak keys of DES. There are 4 possible weak keys
 Please post your comments in the comment section or you can ping me via twitter &lt;a href=&quot;https://twitter.com/st0ic3r&quot;&gt;@st0ci3r&lt;/a&gt; for any queries, suggestions and feedback.&lt;/p&gt;
 </description>
         <pubDate>Sat, 15 Aug 2020 00:00:00 +0530</pubDate>
-        <link>http://localhost:4000/teamweb/2020/08/15/arab-security-cyber-wargames.html</link>
-        <guid isPermaLink="true">http://localhost:4000/teamweb/2020/08/15/arab-security-cyber-wargames.html</guid>
+        <link>http://localhost:4000/2020/08/15/arab-security-cyber-wargames.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2020/08/15/arab-security-cyber-wargames.html</guid>
         
         <category>crypto</category>
         
@@ -441,8 +441,8 @@ q = 1431658262314921627510773683473363196308420782143674628950149812953092962552
 
 </description>
         <pubDate>Mon, 10 Aug 2020 00:00:00 +0530</pubDate>
-        <link>http://localhost:4000/teamweb/crypto/ctf/okamoto/2020/08/10/poseidonctf-2020-writeups.html</link>
-        <guid isPermaLink="true">http://localhost:4000/teamweb/crypto/ctf/okamoto/2020/08/10/poseidonctf-2020-writeups.html</guid>
+        <link>http://localhost:4000/crypto/ctf/okamoto/2020/08/10/poseidonctf-2020-writeups.html</link>
+        <guid isPermaLink="true">http://localhost:4000/crypto/ctf/okamoto/2020/08/10/poseidonctf-2020-writeups.html</guid>
         
         
         <category>crypto</category>
@@ -508,8 +508,8 @@ print(c)
 
 </description>
         <pubDate>Mon, 10 Aug 2020 00:00:00 +0530</pubDate>
-        <link>http://localhost:4000/teamweb/z3/ctf/rev/2020/08/10/PoseidonCTF.html</link>
-        <guid isPermaLink="true">http://localhost:4000/teamweb/z3/ctf/rev/2020/08/10/PoseidonCTF.html</guid>
+        <link>http://localhost:4000/z3/ctf/rev/2020/08/10/PoseidonCTF.html</link>
+        <guid isPermaLink="true">http://localhost:4000/z3/ctf/rev/2020/08/10/PoseidonCTF.html</guid>
         
         
         <category>z3</category>
@@ -555,8 +555,8 @@ The flag is in &lt;code class=&quot;highlighter-rouge&quot;&gt;config.php&lt;/co
 &lt;p&gt;&lt;strong&gt;&lt;em&gt;Flag: &lt;code class=&quot;highlighter-rouge&quot;&gt;inctf{REQU357_5MUGG71NG_4ND_1NCLUD3_F0R_TH3_W1N}&lt;/code&gt;&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
 </description>
         <pubDate>Mon, 03 Aug 2020 18:54:49 +0530</pubDate>
-        <link>http://localhost:4000/teamweb/blog/2020/08/03/buggy.html</link>
-        <guid isPermaLink="true">http://localhost:4000/teamweb/blog/2020/08/03/buggy.html</guid>
+        <link>http://localhost:4000/blog/2020/08/03/buggy.html</link>
+        <guid isPermaLink="true">http://localhost:4000/blog/2020/08/03/buggy.html</guid>
         
         <category>file upload</category>
         
@@ -617,8 +617,8 @@ flag = bytearray(m)&lt;/x&gt;&lt;/li&gt;
 &lt;p&gt;Please send your feedback, queries, suggestions via twitter &lt;a href=&quot;https://twitter.com/st0ic3r&quot;&gt;@st0ic3r&lt;/a&gt;.&lt;/p&gt;
 </description>
         <pubDate>Sun, 02 Aug 2020 00:00:00 +0530</pubDate>
-        <link>http://localhost:4000/teamweb/crypto/ctf/rsa/2020/08/02/inctf-2020-writeups.html</link>
-        <guid isPermaLink="true">http://localhost:4000/teamweb/crypto/ctf/rsa/2020/08/02/inctf-2020-writeups.html</guid>
+        <link>http://localhost:4000/crypto/ctf/rsa/2020/08/02/inctf-2020-writeups.html</link>
+        <guid isPermaLink="true">http://localhost:4000/crypto/ctf/rsa/2020/08/02/inctf-2020-writeups.html</guid>
         
         
         <category>crypto</category>

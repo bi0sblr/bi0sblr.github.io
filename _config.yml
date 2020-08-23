@@ -13,8 +13,8 @@ postsTitle: Our Writeups
 postsDescription: The writeups that we have written over the year.
 contactTitle: Get in touch
 contactDescription:
-baseurl: "/teamweb" # the subpath of your site, e.g. /blog
-url: "https://bi0sblr.tech" # the base hostname & protocol for your site
+baseurl: "" # the subpath of your site, e.g. /blog
+url: "https://bi0sblr.github.io" # the base hostname & protocol for your site
 copyright: 
 # Contact info
 email: bi0sbangalore@gmail.com
