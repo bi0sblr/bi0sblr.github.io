@@ -1,0 +1,188 @@
+I"�'<h1 id="investigation">Investigation</h1>
+
+<h2 id="chall-description">Chall Description</h2>
+
+<p><img src="/images/inctfi/1.png" alt="description" /></p>
+
+<h2 id="writeup">Writeup</h2>
+
+<p>As we were given a windows memory dump file I’ve started to analyze it with volatility.
+So 1st we go with finding image profile using imageinfo command in volatility.
+But this takes a little while…</p>
+
+<p><img src="/images/inctfi/2.png" alt="Screenshot from 2020-08-06 06-45-55" /></p>
+
+<p>Now knowing profile we can proceed to find what we need.</p>
+
+<p>The main objectives are:</p>
+<ul>
+  <li>To find when is the last time that caluclator is opened.</li>
+  <li>To find how many times Chrome was used.</li>
+</ul>
+
+<h3 id="part-1">Part-1</h3>
+
+<p>To find when an app is last opened, there are multiples way to proceed with. Those are,</p>
+<ul>
+  <li>Prefetch files
+Windows store prefetch files and these prefetch files give details about every file that is opened and details like when its last modified, what version it is, and all details.
+All we have to do is get that prefetch file which is related to calc.exe and open it using <strong>IEF</strong> tool or <strong>CROWDSTRIKE CROWDRESPONSE</strong> tool.
+But issue with this method is you should be able to extract and open .pf files properly. Unfortunately the timestamp mentioned in this process is incorrect.
+Prefetch files can be found under the <code class="highlighter-rouge">C:\Windows\Prefetch</code> folder.</li>
+  <li>Super Prefetch files
+Also in the Prefetch directory can be some files which are related to Superfetch. One of these files is AgAppLaunch.db which contains information about the       executed files. I found this file so I used <strong>CrowdStrike’s CrowdResponse</strong> tool to parse it. I could successfully parse the file and get a file for Adobe Reader execution but unfortunately, this value is also incorrect.</li>
+  <li>MFT Parser;
+I’ve used mftparser and copied the output to a text file. I’ve tried mactime plugin also which gave me 4 outputs i.e, 4 time stamps. But all ofthese are incorrect again.</li>
+  <li>User assist;
+  Similar to prefetch there will be a folder called userassist which has crucial data like time stamps and run count and version etc… details. I got to know there is a plugin for getting info about userassist directory.</li>
+</ul>
+
+<p>Command will be;    <code class="highlighter-rouge">volatility -f windows.vmem --profile=Win7SP1x64 userassist</code></p>
+
+<p>From the outputs searching for calc.exe, the result is as follows.
+<img src="/images/inctfi/3.png" alt="calc exe-userassist" />
+We can see the timestamp of when calculator is last updated: <code class="highlighter-rouge">21-07-2020_18:21:35</code></p>
+
+<h3 id="part-2">Part-2</h3>
+
+<p>I have already mentioned that we can get run count using userassist plugin. So from results,I searched for Chrome and the output is as follows;</p>
+
+<p><img src="/images/inctfi/4.png" alt="chrome-userassist" /></p>
+
+<p>The count is 19 as mentioned.</p>
+
+<p>Wrapping the time stamp and count in flag format gives; <code class="highlighter-rouge">inctf{21-07-2020_18:21:35_19}</code></p>
+
+<p>While doing this challenge during ctf, I have started with part2 so I am so sure that count is 19 and was able to identify which timestamp is correct and which is not.</p>
+
+<p>Thanks to stuxn3t for such intresting chall.</p>
+
+<h1 id="investigation-continues">Investigation Continues:</h1>
+
+<h2 id="description">Description</h2>
+
+<p><img src="/images/inctfi/5.png" alt="inv cont description" /></p>
+
+<h2 id="writeup-1">Writeup</h2>
+
+<p>Current challenge is the continution of Investigation Challenge. So skipping some basic steps and directly moving to the main part.
+The objectives of this challenge as per description suggests are;</p>
+<ul>
+  <li>We are asked to find when is the last time Adam entered incorrect password.</li>
+  <li>We have to find when is the last time the file 1.jpg opened.</li>
+  <li>We have to find when is the last time when chrome is launched through task bar.</li>
+</ul>
+
+<p>I’m writing this writeup in the order I got the flags.</p>
+
+<h3 id="part-3">Part-3</h3>
+<p>Last time when chrome is launched through taskbar.</p>
+
+<p>To find that I have used userassist to check if there is any info related to taskbar/…./google chrome or similar.</p>
+
+<p>And my guess was right. I got the timestamp of it and it is as follows.</p>
+
+<p><a href="/images/inctfi/6.png">taskbar-chrome</a></p>
+
+<p>So from the pic we see the timestamp of last opened through taskbar is <code class="highlighter-rouge">2020-07-21 17:37:18</code></p>
+
+<h3 id="part-2-1">Part-2</h3>
+
+<p>Generally, 1.jpg is a file. So I thought it can be in filescan. But it’s not there. So We see that it might be deleted or Inserted into some other file.</p>
+
+<p>Now I have only option left and that is to check mftparser. Then I made a text file and copying output of mftparser.
+For minimizing my burden, I have tried <code class="highlighter-rouge">strings</code> command with searching for 1.jpg as follows;</p>
+
+<p><img src="/images/inctfi/7.png" alt="Screenshot from 2020-08-06 21-17-08" /></p>
+
+<p>So we can be sure that we found 1.jpg somewhere. Mind that the output file which has contents of mftparser is 16MB.</p>
+
+<p>Make sure that you have good ram or good text opener with many features and requires less ram.
+Searching for 1.jpg, we can find it is not exactly the file. But it is stored in 1.lnk. I was sure that this is the correct time stamp because I didnot find any other 1.jpgs.</p>
+
+<p><img src="/images/inctfi/8.jpeg" alt="WhatsApp Image 2020-08-02 at 05 51 48" /></p>
+
+<p>From the snap, we see that timestamp is <code class="highlighter-rouge">2020-07-21 18:38:33</code></p>
+
+<h3 id="part-1-1">Part-1</h3>
+
+<p>This is the tough part of the chall. And I had no idea how to deal with this. So after so much googilng and learning new things I got to know that we can use event logs to get those timestamps.</p>
+
+<p>But evtlogs plugin only works for windowsXP and windows2003 profiles only :(</p>
+
+<p>Again after googling and reading various volatility plugins got to know that we have to do registry analysis.</p>
+
+<p>There are 2 ways which are extracting ntuser.dat or SAM registries and we have to open it using some registry exlorer or can be decoded from hex which is similar to decoding hex in userassist.</p>
+
+<p>I tried extracting SAM registry for knowing where exactly it is we can use <strong>Hivelist</strong> plugin. From the output obtained we can see both as follows;</p>
+
+<p><img src="/images/inctfi/9.png" alt="Screenshot from 2020-08-06 22-49-05" /></p>
+
+<p>Now we have to extract any of those registries with <strong>Dumpregistry</strong> plugin. I have extracted SAM registry.</p>
+
+<p>Then opened it with Registry explorer and inspecting on users carefully gives us the timestamp <strong>2020-07-22 09:05:11</strong>.</p>
+
+<p>By the time I extracted this registry the ctf has ended and it really hurts when we miss something big when we lack time of 5 minutes. :(</p>
+
+<p>Wrapping the flags we got as mentioned gives us;</p>
+
+<p><code class="highlighter-rouge">Flag1; 22-07-2020_09:05:11</code></p>
+
+<p><code class="highlighter-rouge">Flag2; 21-07-2020_18:38:33</code></p>
+
+<p><code class="highlighter-rouge">Flag3; 21-07-2020_17:37:18</code></p>
+
+<p>Joining these 3 flags, we get <code class="highlighter-rouge">inctf{22-07-2020_09:05:11_21-07-2020_18:38:33_21-07-2020_17:37:18}</code>.</p>
+
+<p>But I enjoyed the challenge and learnt many things about analyzing registries and related info. Thanks to stuxn3t.</p>
+
+<h1 id="logarithm">LOGarithm:</h1>
+
+<h2 id="description-1">Description</h2>
+
+<p><img src="/images/inctfi/10.png" alt="description" /></p>
+
+<h2 id="writeup-2">Writeup;</h2>
+
+<p>We’re given a .vmem and a pcap file.
+Let’s start with .vmem file using volatility and we can find profile using <strong>imageinfo</strong> plugin in volatility.</p>
+
+<p><img src="/images/inctfi/11.png" alt="imageinfo" /></p>
+
+<p>We can use any of the profiles listed above in the pic.
+Now let us observe what processes are running to know what is suspicious in memory dump.
+We can do this using <strong>pstree</strong> plugin and I’m focusing on main observation we are supposed to observe. 
+Well we can see there is cmd.exe in explorer.exe as there in pic below.</p>
+
+<p><img src="/images/inctfi/12.png" alt="pstree" /></p>
+
+<p>Along with that there is some pythonw.exe. Lets start analysing cmd.exe
+By using <strong>cmdscan</strong> we can know what command is executed last in terminal.</p>
+
+<p><img src="/images/inctfi/13.png" alt="cmddownload" /></p>
+
+<p>As we see we couldn’t find any commands we can see “Downloads” and “Desktop” maybe a clue to proceed.
+So now lets check if there are any suspicious files in Desktop or Downloads. 
+We can find it using Filescan as shown above in the pic.
+Well we see a .py in Downloads. Lets go see what it does.</p>
+
+<p><img src="/images/inctfi/14.png" alt="pycode" /></p>
+
+<p>So after understanding the code, we can understand its prime motive is to xor a message with variable <code class="highlighter-rouge">t3mp</code>.
+And it is recieving message from specific ip address and port number.
+So we have a pcap let’s try to get the message from it using wireshark.</p>
+
+<p><img src="/images/inctfi/15.png" alt="wireshark" /></p>
+
+<p>We see there is some encoded data lets get that using exfiltration in wireshark or we can use scapy module in python. So from scapy, we have to code and extract.
+Now I thought it would be xor and xoring again with “t3mp” could give flag But its not. It’s base64 encoded though.
+Now as “t3mp” isnt working and base64 decoding is not giving anything useful we have to search for more details.
+After using <strong>cmdline, consoles, envars…</strong>. I encountered some data in envars which is as follows;</p>
+
+<p><img src="/images/inctfi/16.png" alt="envar" /></p>
+
+<p>Now lets try xor this msg with “t3mp”, but still that isn’t useful.
+So I tried xoring the data we got in envars with data we got in wireshark.
+Well finally this gave the flag. And the flag is; <code class="highlighter-rouge">inctf{n3v3r_TrUs7_Sp4m_e_m41Ls}</code></p>
+
+:ET
