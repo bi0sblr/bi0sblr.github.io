@@ -13,8 +13,7 @@ categories: Forensics
 # DB64:
 
 ## Description;
-
-![db64](/images/poseidon/forensics/db64 desc.png)
+![db64 desc](/images/poseidon/forensics/db64 desc.png)
 
 
 ## Writeup;
