@@ -22,7 +22,7 @@ categories: Forensics
 As there in description, I have started checking firefoxhistory and chromehistory.
 Checking chromehistory I got these;
 
-![Screenshot from 2020-08-12 03-55-16](https://user-images.githubusercontent.com/47820151/90007553-cbec2780-dc4f-11ea-816b-7294bcf8ba00.png)
+![Screenshot from 2020-08-12 03-55-16](/images/poseidon/forensics/90007553-cbec2780-dc4f-11ea-816b-7294bcf8ba00.png)
 
 
 So I've gone to that link and downloaded the zip which contained a .kbdx file.
