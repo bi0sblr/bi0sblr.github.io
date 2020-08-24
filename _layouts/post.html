@@ -7,19 +7,20 @@ layout: default
 	<section id="wrapper">
 		<header>
 			<div class="inner">
-				<h2>{{ page.title }}</h2>
-				<p class="post-meta"><time datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">{{ page.date | date: "%b %-d, %Y" }}</time>{% if page.author %} • <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span itemprop="name">{{ page.author }}</span></span>{% endif %}</p>
-				<p>{{ page.tagline }}</p>
+        <h2>{{ page.title }}</h2>
+        <!--<p class="post-meta"><time datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">{{ page.date | date: "%b %-d, %Y" }}</time>{% if page.author %} • <span itemprop="author" itemscope itemtype="http://schema.org/Person" style="text-transform: none; !important"><span itemprop="name">{{ page.author }}</span></span>{% endif %}</p>-->
+				<p style="text-transform: none !important">{{ page.tagline }}</p>
 			</div>
 		</header>
 
 		<!-- Content -->
 			<div class="wrapper">
 				<div class="inner">
+          {{ content }}
+          <h2>My Writeups</h2>
+          <p>A growing collection of the writeups that I've written in {{ page.categories }}.</p>
 
-					{{ content }}
-
-					{% include features.html %}
+					{% include blogs.html %}
 					
 				</div>
 			</div>

@@ -4,11 +4,12 @@ title: PoseidonCTF 2020 writeups
 date: 2020-08-10
 subtitle : discrete log challenge
 image: /images/poseidon/logo.png
-categories:
+tags:
    - crypto
    - ctf
    - okamoto
-author_staff_member: Siddartha Malladi
+author: st0ic3r
+categories: Cryptography
 ---
 ![logo](/images/poseidon/logo.png)
 ## Challenge: discrete log

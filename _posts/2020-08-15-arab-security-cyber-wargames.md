@@ -5,7 +5,8 @@ date: 2020-08-15
 description : Crypto Writeups
 image: /images/ascwg/ascscoreboard.png
 tags: [crypto,ctf,rsa,des]
-author_staff_member: Siddartha Malladi
+author: st0ic3r
+categories: Cryptography
 ---
 ![scoreboard](/images/ascwg/ascscoreboard.png)
 First things first, Arab Security Cyber Wargames is a qualifiers CTF, Top 10 would be qualified for the finals at Egypt.

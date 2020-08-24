@@ -4,11 +4,12 @@ title: PoseidonCTF
 description: Rev writeups
 date: 2020-08-10
 image: /images/poseidon/logo.png
-categories:
+tags:
    - z3
    - ctf
    - rev
-author_staff_member: Nischay
+author: thatloststudent
+categories: Reversing
 ---
 
 ![logo](/images/poseidon/logo.png)

@@ -3,11 +3,12 @@ layout: post
 title: InCTF 2020 writeups
 date: 2020-08-02
 description : PolyRSA writeup
-categories: 
+tags: 
    - crypto
    - ctf
    - rsa
-author_staff_member: st0ic3r
+author: st0ic3r
+categories: Cryptography
 ---
 ## Challenge: PolyRSA
 
@@ -28,6 +29,7 @@ where `m` & `n` are the degree of the two irreducible polynomials reduced from m
 ### The Vulnerability
 * Given n is factorizable.
 Here is my exploit,
+
 ```python
 p = 2470567871
 P.<x> = PolynomialRing(GF(p))
