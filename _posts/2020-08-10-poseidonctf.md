@@ -7,7 +7,7 @@ image: /images/poseidon/logo.png
 tags:
    - ctf
    - forensics
-author: thatloststudent
+author: s0ur_bl00d
 categories: Forensics
 ---
 # DB64:
