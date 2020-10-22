@@ -6,8 +6,8 @@
 </description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 24 Aug 2020 19:27:37 +0530</pubDate>
-    <lastBuildDate>Mon, 24 Aug 2020 19:27:37 +0530</lastBuildDate>
+    <pubDate>Mon, 24 Aug 2020 19:28:43 +0530</pubDate>
+    <lastBuildDate>Mon, 24 Aug 2020 19:28:43 +0530</lastBuildDate>
     <generator>Jekyll v4.0.0</generator>
     
       <item>
@@ -738,9 +738,10 @@ After clicking on register we see a &lt;code class=&quot;highlighter-rouge&quot;
 
 &lt;p&gt;&lt;img src=&quot;/images/inctfi/403.jpg&quot; alt=&quot;error&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;Looking at this, thought we can bypass it which is smuggling the request to get registered. After some googling i found a way to bypass it
-&lt;code class=&quot;highlighter-rouge&quot;&gt;/./register.php?username=ph03n1x&amp;amp;password=ph03n1x&lt;/code&gt;&lt;br /&gt;
-Intercepting the request with burp and forwarding it, our registration is successful.&lt;/p&gt;
+&lt;p&gt;Looking at this, thought we can bypass it which is smuggling the request to get registered. After some googling i found a way to bypass it&lt;/p&gt;
+&lt;div class=&quot;language-html highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;/./register.php?username=ph03n1x&lt;span class=&quot;err&quot;&gt;&amp;amp;&lt;/span&gt;password=ph03n1x
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Intercepting the request with burp and forwarding it, our registration is successful.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;/images/inctfi/Request.jpg&quot; alt=&quot;burp&quot; /&gt;&lt;/p&gt;
 
@@ -748,16 +749,18 @@ Intercepting the request with burp and forwarding it, our registration is succes
 I thought of getting a PHP Shell and uploaded a php file.&lt;br /&gt;
 After uploading the php, there’s an option to &lt;code class=&quot;highlighter-rouge&quot;&gt;include&lt;/code&gt; the file. We get a page with following details&lt;/p&gt;
 &lt;blockquote&gt;
-  &lt;p&gt;The file has been uploaded to: /var/www/uploads/df0f1a1ac715de9266c8d8391769156a&lt;/p&gt;
-
-  &lt;p&gt;To include the file, use ?include=&lt;/p&gt;
+  &lt;p&gt;The file has been uploaded to: /var/www/uploads/df0f1a1ac715de9266c8d8391769156a&lt;br /&gt;
+To include the file, use ?include=&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;Here we get &lt;code class=&quot;highlighter-rouge&quot;&gt;LFI&lt;/code&gt; at &lt;code class=&quot;highlighter-rouge&quot;&gt;/../../../var/www/uploads/df0f1a1ac715de9266c8d8391769156a&lt;/code&gt;
-This &lt;code class=&quot;highlighter-rouge&quot;&gt;include&lt;/code&gt; option allows only the content of &lt;code class=&quot;highlighter-rouge&quot;&gt;http (or) https&lt;/code&gt;.&lt;br /&gt;
-The final payload for LFI will be &lt;br /&gt;
-&lt;code class=&quot;highlighter-rouge&quot;&gt;/index.php?include=http:/../../../var/www/uploads/df0f1a1ac715de9266c8d8391769156a&lt;/code&gt;&lt;br /&gt;
-After getting the shell, &lt;code class=&quot;highlighter-rouge&quot;&gt;cat&lt;/code&gt; the files in directory.&lt;br /&gt;
+&lt;p&gt;Here we get &lt;code class=&quot;highlighter-rouge&quot;&gt;LFI&lt;/code&gt; at&lt;/p&gt;
+&lt;div class=&quot;language-html highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;/../../../var/www/uploads/df0f1a1ac715de9266c8d8391769156a
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;This &lt;code class=&quot;highlighter-rouge&quot;&gt;include&lt;/code&gt; option allows only the content of &lt;code class=&quot;highlighter-rouge&quot;&gt;http (or) https&lt;/code&gt;.&lt;br /&gt;
+The final payload for LFI will be &lt;br /&gt;&lt;/p&gt;
+&lt;div class=&quot;language-html highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;/index.php?include=http:/../../../var/www/uploads/df0f1a1ac715de9266c8d8391769156a
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;After getting the shell, &lt;code class=&quot;highlighter-rouge&quot;&gt;cat&lt;/code&gt; the files in directory.&lt;br /&gt;
 The flag is in &lt;code class=&quot;highlighter-rouge&quot;&gt;config.php&lt;/code&gt;.&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;&lt;em&gt;Flag: &lt;code class=&quot;highlighter-rouge&quot;&gt;inctf{REQU357_5MUGG71NG_4ND_1NCLUD3_F0R_TH3_W1N}&lt;/code&gt;&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
